@@ -4,128 +4,256 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AI 智慧領隊｜管理後台</title>
+<title>TRAVEL AI STUDIO V0.2</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#0e1726;color:#edf3ff;font-family:Arial,sans-serif}
-header{padding:22px;background:#192b43}
-h1{font-size:23px;margin:0 0 8px}
-small{color:#a9bdd5}
-main{padding:16px;max-width:800px;margin:auto}
-section{background:#1a2a40;padding:18px;border-radius:14px;margin-bottom:16px}
-h2{font-size:19px;margin-top:0}
-label{display:block;margin:14px 0 6px;color:#c7d8ee}
-input,textarea,select{width:100%;padding:12px;border:1px solid #51647c;border-radius:9px;background:#101e31;color:white;font-size:16px}
-textarea{min-height:85px}
-button{border:0;border-radius:10px;padding:13px;background:#3d83d9;color:white;font-size:16px;margin:5px 4px 5px 0}
-.primary{background:#21875e}
-.danger{background:#a44848}
-.status{font-size:13px;color:#b7d2ec}
+body{margin:0;background:#0d1726;color:#edf3ff;font-family:system-ui,Arial}
+header{background:#192c44;padding:22px}
+h1{font-size:25px;margin:0}
+header p{color:#a8c0dc}
+main{max-width:850px;margin:auto;padding:15px}
+section{background:#1a2b41;border:1px solid #36516f;border-radius:14px;padding:17px;margin-bottom:15px}
+h2{font-size:19px;margin:0 0 15px}
+label{display:block;margin:12px 0 5px;color:#cbdcf0}
+input,textarea,select{width:100%;padding:12px;background:#0d1d30;border:1px solid #54708d;color:white;border-radius:9px;font-size:16px}
+textarea{min-height:95px}
+button{background:#397fd2;color:white;border:0;border-radius:9px;padding:12px;margin:5px 4px 5px 0;font-size:15px}
+.green{background:#168263}
+.red{background:#a44343}
+.item{border:1px solid #405b78;border-radius:10px;padding:12px;margin:12px 0}
+.note{font-size:13px;color:#a9c1db}
+#status{color:#7de2b4}
 </style>
 </head>
 <body>
 <header>
 <h1>TRAVEL AI STUDIO</h1>
-<small>AI 智慧領隊｜遊戲管理後台 V0.1</small>
+<p>AI 智慧領隊｜遊戲管理後台 V0.2</p>
 </header>
 <main>
 <section>
-<h2>關卡管理</h2>
-<label>選擇關卡</label>
-<select id="level" onchange="loadLevel()"></select>
-<label>關卡名稱</label>
-<input id="name">
-<label>場景描述</label>
-<textarea id="scene"></textarea>
-<label>事故事件與觸發條件</label>
-<textarea id="event"></textarea>
+<h2>關卡選擇</h2>
+<select id="level"></select>
+<p class="note">三個關卡已建立，可切換編輯。</p>
 </section>
 <section>
-<h2>NPC 角色設定</h2>
-<label>NPC 名稱與身分</label>
-<input id="npc">
-<label>NPC 對話</label>
-<textarea id="dialogue"></textarea>
+<h2>關卡基本資料</h2>
+<label>關卡名稱</label><input id="name">
+<label>3D 場景描述</label><textarea id="scene"></textarea>
+<label>事故事件與觸發條件</label><textarea id="event"></textarea>
+<label>學習目標</label><textarea id="goal"></textarea>
 </section>
 <section>
-<h2>AI 導師協作</h2>
+<h2>NPC 角色與對話</h2>
+<div id="npcs"></div>
+<button id="addNpc">＋新增 NPC</button>
+</section>
+<section>
+<h2>玩家決策分支</h2>
+<div id="choices"></div>
+<button id="addChoice">＋新增玩家選項</button>
+</section>
+<section>
+<h2>TRAVEL AI 導師</h2>
 <label>AI 導師引導提示</label>
 <textarea id="mentor"></textarea>
-<label>預期學習目標</label>
-<textarea id="goal"></textarea>
+<label>AI 導師角色規則</label>
+<textarea id="rules"></textarea>
 </section>
 <section>
-<h2>評估機制</h2>
-<label>處置程序評分標準</label>
+<h2>六構面評分權重</h2>
+<div id="weights"></div>
+<p id="total"></p>
+<label>評分說明</label>
 <textarea id="rubric"></textarea>
-<label>關卡總分</label>
-<input id="points" type="number" min="0" max="100">
 </section>
 <section>
-<h2>儲存與匯出</h2>
-<button class="primary" onclick="saveLevel()">儲存本關設定</button>
-<button onclick="exportData()">匯出 JSON</button>
-<button onclick="document.getElementById('file').click()">匯入 JSON</button>
-<input id="file" type="file" accept=".json,application/json" hidden onchange="importData(event)">
-<p id="status" class="status">尚未編輯</p>
+<h2>資料管理</h2>
+<button class="green" id="save">儲存設定</button>
+<button id="export">匯出 JSON</button>
+<button id="importBtn">匯入 JSON</button>
+<input type="file" id="file" accept=".json" hidden>
+<p id="status">系統準備就緒</p>
+<p class="note">資料儲存在目前瀏覽器。匯出 JSON 後，仍須另外接入遊戲。此後台尚無登入驗證。</p>
 </section>
 </main>
 <script>
 const defaults=[
-{name:"第一關｜旅客突發身體不適",scene:"第一人稱視角，旅遊團體集合現場。",event:"旅客突然表示頭暈並坐下，需要領隊判斷處置順序。",npc:"身體不適的旅客",dialogue:"領隊，我突然覺得很不舒服。",mentor:"先確認現場安全、旅客意識與症狀，再判斷是否需要緊急協助。",goal:"練習緊急事故初步判斷、通報與團隊協作。",rubric:"辨識問題30分；處置順序30分；溝通與通報20分；AI協作20分。",points:100},
-{name:"第二關｜旅客走失事件",scene:"第一人稱視角，旅遊景點集合區。",event:"集合時發現一位旅客未到場。",npc:"同行團員",dialogue:"領隊，有一個人還沒回來！",mentor:"確認最後出現位置、聯絡方式及其他團員安全。",goal:"練習旅客走失事件的資訊蒐集與協調。",rubric:"資訊確認30分；處置30分；通報20分；AI協作20分。",points:100},
-{name:"第三關｜交通事故應變",scene:"第一人稱視角，遊覽車行程途中。",event:"車輛發生碰撞，部分旅客需要協助。",npc:"遊覽車司機",dialogue:"領隊，車子發生事故了！",mentor:"先確認現場是否安全，必要時請求緊急救援。",goal:"練習交通事故的安全判斷與緊急協作。",rubric:"安全確認30分；救援與通報30分；旅客安置20分；AI協作20分。",points:100}
+{
+name:"第一關｜消失的護照",
+scene:"日本東京飯店大廳。玩家扮演15人旅行團的領隊，早上準備帶領旅客前往淺草寺。",
+event:"集合期間，陳小姐發現護照遺失。玩家須確認最後使用位置、安撫旅客、聯繫飯店及旅行社，並評估團體行程安排。",
+goal:"練習旅遊事故判斷、資訊蒐集、旅客安撫、跨單位協調與AI協作。",
+npcs:[
+{name:"陳小姐",role:"護照遺失旅客",dialogue:"領隊！我找不到護照了！昨天辦理入住時明明還有拿出來，現在怎麼辦？"},
+{name:"飯店櫃檯人員",role:"飯店服務人員",dialogue:"您好，請問需要我們協助確認入住時的相關情況嗎？"},
+{name:"旅行社窗口",role:"後勤支援",dialogue:"請先確認旅客狀況與目前掌握的資訊，我們一起協調後續處理。"}
+],
+choices:[
+{text:"先安撫旅客，確認護照最後使用的位置",reply:"陳小姐：我記得昨晚辦理入住時有拿出來。",next:"向飯店櫃檯查詢，協助旅客再次確認物品。",score:10},
+{text:"先安排其他團員，再回頭處理",reply:"陳小姐：可是我現在真的很擔心。",next:"應兼顧團體安排與當事旅客的即時協助。",score:0},
+{text:"直接要求旅客自行處理",reply:"陳小姐：我不熟悉這裡，可以幫我嗎？",next:"重新檢視領隊的協助及通報責任。",score:-10}
+],
+mentor:"引導玩家先確認護照最後出現位置、旅客安全與後續行程。",
+rules:"以提問引導學生思考，不直接代替學生決策。證件與官方程序應查證最新規定。",
+rubric:"依六構面評估學生事故處理與AI協作表現。",
+weights:[25,25,20,15,10,5]
+},
+{
+name:"第二關｜團員走散了",
+scene:"泰國曼谷觀光景點集合區，旅遊團準備集合。",
+event:"集合時發現一名團員未到。玩家須確認最後位置、聯絡方式及其他團員安全。",
+goal:"練習走失事件的資訊確認、通報與協調。",
+npcs:[
+{name:"同行團員",role:"目擊旅客",dialogue:"領隊，有一個人還沒回來！"}
+],
+choices:[
+{text:"清點人數並確認最後目擊位置",reply:"團員：我剛剛在入口附近看過他。",next:"聯繫走失旅客並安排搜尋與團體照顧。",score:10}
+],
+mentor:"提醒學生確認人數、最後位置、聯絡方式及現場安全。",
+rules:"優先引導判斷，不提供未經確認的資訊。",
+rubric:"評估事故判斷、通報、協作與旅客照顧。",
+weights:[25,25,20,15,10,5]
+},
+{
+name:"第三關｜航班取消，怎麼回國？",
+scene:"韓國仁川機場，旅遊團準備辦理返程登機。",
+event:"航空公司通知航班取消，玩家須確認正式資訊、協調替代方案與旅客安排。",
+goal:"練習航班異常處置、資訊查證與團體溝通。",
+npcs:[
+{name:"航空公司地勤",role:"航班資訊窗口",dialogue:"您好，目前航班已取消，後續安排正在確認。"}
+],
+choices:[
+{text:"先確認航空公司正式通知及替代安排",reply:"地勤：我們會提供目前可確認的資訊。",next:"向旅客說明並協調後續安排。",score:10}
+],
+mentor:"引導學生確認官方資訊、旅客需求與可行替代方案。",
+rules:"不得編造航班、補償、簽證或入境規定。",
+rubric:"評估查證能力、溝通、協調與危機處理。",
+weights:[25,25,20,15,10,5]
+}
 ];
-const key="travel_ai_studio_v01";
-let data;
+
+const key="travel_ai_studio_v02";
+const $=id=>document.getElementById(id);
+const names=["危機判斷","SOP處理","旅客安撫","AI使用","時間管理","旅客滿意度"];
+let data=defaults;
 try{
 const saved=JSON.parse(localStorage.getItem(key));
-data=Array.isArray(saved)&&saved.length===3?saved:defaults;
-}catch(e){data=defaults;}
-const fields=["name","scene","event","npc","dialogue","mentor","goal","rubric","points"];
-const select=document.getElementById("level");
-data.forEach((x,i)=>{
-const o=document.createElement("option");
-o.value=i;o.textContent="第"+(i+1)+"關";
-select.appendChild(o);
+if(Array.isArray(saved)&&saved.length===3&&saved.every(x=>Array.isArray(x.npcs)&&Array.isArray(x.choices)))data=saved;
+}catch(e){}
+let current=0;
+
+function make(tag,parent,text){
+const e=document.createElement(tag);
+if(text!==undefined)e.textContent=text;
+parent.appendChild(e);
+return e;
+}
+function input(parent,label,value,change,area=false){
+const l=make("label",parent,label);
+const e=make(area?"textarea":"input",parent);
+e.value=value??"";
+e.oninput=()=>change(e.value);
+return e;
+}
+function capture(){
+const d=data[current];
+["name","scene","event","goal","mentor","rules","rubric"].forEach(k=>d[k]=$(k).value);
+}
+function render(){
+const d=data[current];
+$("level").value=current;
+["name","scene","event","goal","mentor","rules","rubric"].forEach(k=>$(k).value=d[k]||"");
+
+const np=$("npcs");np.replaceChildren();
+d.npcs.forEach((n,i)=>{
+const box=make("div",np);box.className="item";
+input(box,"NPC名稱",n.name,v=>n.name=v);
+input(box,"角色身分",n.role,v=>n.role=v);
+input(box,"對話內容",n.dialogue,v=>n.dialogue=v,true);
+const b=make("button",box,"刪除 NPC");b.className="red";
+b.onclick=()=>{d.npcs.splice(i,1);capture();render()};
 });
-function loadLevel(){
-const item=data[Number(select.value)];
-fields.forEach(k=>document.getElementById(k).value=item[k]??"");
-document.getElementById("status").textContent="已載入關卡設定";
-}
-function saveLevel(){
-const i=Number(select.value);
-fields.forEach(k=>{
-const v=document.getElementById(k).value;
-data[i][k]=k==="points"?Number(v):v;
+
+const cp=$("choices");cp.replaceChildren();
+d.choices.forEach((c,i)=>{
+const box=make("div",cp);box.className="item";
+input(box,"玩家選項",c.text,v=>c.text=v,true);
+input(box,"NPC回應",c.reply,v=>c.reply=v,true);
+input(box,"後續事件",c.next,v=>c.next=v,true);
+const s=input(box,"分數變化",c.score,v=>c.score=Number(v));
+s.type="number";
+const b=make("button",box,"刪除選項");b.className="red";
+b.onclick=()=>{d.choices.splice(i,1);capture();render()};
 });
-localStorage.setItem(key,JSON.stringify(data));
-document.getElementById("status").textContent="已儲存在目前瀏覽器";
+
+const wp=$("weights");wp.replaceChildren();
+names.forEach((name,i)=>{
+const e=input(wp,name,d.weights[i],v=>{
+d.weights[i]=Number(v);total();
+});
+e.type="number";e.min=0;e.max=100;
+});
+total();
 }
-function exportData(){
-saveLevel();
-const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
-const a=document.createElement("a");
-a.href=URL.createObjectURL(blob);
-a.download="travel_ai_levels.json";
-a.click();
-setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+function total(){
+const n=data[current].weights.reduce((a,b)=>a+Number(b||0),0);
+$("total").textContent="目前總權重："+n+" / 100"+(n===100?" ✓":"（請調整）");
 }
-async function importData(e){
-const file=e.target.files[0];
-if(!file)return;
+function save(){
+capture();
 try{
-const parsed=JSON.parse(await file.text());
-if(!Array.isArray(parsed)||parsed.length!==3||!parsed.every(x=>fields.every(k=>Object.hasOwn(x,k))))throw Error("格式不正確");
-data=parsed;
 localStorage.setItem(key,JSON.stringify(data));
-loadLevel();
-document.getElementById("status").textContent="匯入成功";
+$("status").textContent="儲存成功（目前瀏覽器）";
+return true;
+}catch(e){
+$("status").textContent="儲存失敗："+e.message;
+return false;
+}
+}
+$("level").onchange=()=>{
+capture();current=Number($("level").value);render();
+};
+$("addNpc").onclick=()=>{
+capture();
+data[current].npcs.push({name:"新角色",role:"",dialogue:""});
+render();
+};
+$("addChoice").onclick=()=>{
+capture();
+data[current].choices.push({text:"",reply:"",next:"",score:0});
+render();
+};
+$("save").onclick=save;
+$("export").onclick=()=>{
+if(!save())return;
+const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+const url=URL.createObjectURL(blob);
+const a=make("a",document.body);
+a.href=url;a.download="travel_ai_levels.json";a.click();a.remove();
+setTimeout(()=>URL.revokeObjectURL(url),2000);
+};
+$("importBtn").onclick=()=>$("file").click();
+$("file").onchange=async e=>{
+const f=e.target.files[0];if(!f)return;
+try{
+const parsed=JSON.parse(await f.text());
+if(!Array.isArray(parsed)||parsed.length!==3||
+!parsed.every(x=>typeof x.name==="string"&&
+Array.isArray(x.npcs)&&Array.isArray(x.choices)&&
+Array.isArray(x.weights)&&x.weights.length===6))
+throw Error("檔案格式不符合");
+data=parsed;current=0;
+localStorage.setItem(key,JSON.stringify(data));
+render();$("status").textContent="匯入成功";
 }catch(err){alert("匯入失敗："+err.message);}
 e.target.value="";
-}
-loadLevel();
+};
+data.forEach((d,i)=>{
+const o=make("option",$("level"),"第"+(i+1)+"關");
+o.value=i;
+});
+render();
 </script>
 </body>
 </html>
