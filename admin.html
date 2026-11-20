@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 智慧領隊｜管理後台</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0e1726;color:#edf3ff;font-family:Arial,sans-serif}
+header{padding:22px;background:#192b43}
+h1{font-size:23px;margin:0 0 8px}
+small{color:#a9bdd5}
+main{padding:16px;max-width:800px;margin:auto}
+section{background:#1a2a40;padding:18px;border-radius:14px;margin-bottom:16px}
+h2{font-size:19px;margin-top:0}
+label{display:block;margin:14px 0 6px;color:#c7d8ee}
+input,textarea,select{width:100%;padding:12px;border:1px solid #51647c;border-radius:9px;background:#101e31;color:white;font-size:16px}
+textarea{min-height:85px}
+button{border:0;border-radius:10px;padding:13px;background:#3d83d9;color:white;font-size:16px;margin:5px 4px 5px 0}
+.primary{background:#21875e}
+.danger{background:#a44848}
+.status{font-size:13px;color:#b7d2ec}
+</style>
+</head>
+<body>
+<header>
+<h1>TRAVEL AI STUDIO</h1>
+<small>AI 智慧領隊｜遊戲管理後台 V0.1</small>
+</header>
+<main>
+<section>
+<h2>關卡管理</h2>
+<label>選擇關卡</label>
+<select id="level" onchange="loadLevel()"></select>
+<label>關卡名稱</label>
+<input id="name">
+<label>場景描述</label>
+<textarea id="scene"></textarea>
+<label>事故事件與觸發條件</label>
+<textarea id="event"></textarea>
+</section>
+<section>
+<h2>NPC 角色設定</h2>
+<label>NPC 名稱與身分</label>
+<input id="npc">
+<label>NPC 對話</label>
+<textarea id="dialogue"></textarea>
+</section>
+<section>
+<h2>AI 導師協作</h2>
+<label>AI 導師引導提示</label>
+<textarea id="mentor"></textarea>
+<label>預期學習目標</label>
+<textarea id="goal"></textarea>
+</section>
+<section>
+<h2>評估機制</h2>
+<label>處置程序評分標準</label>
+<textarea id="rubric"></textarea>
+<label>關卡總分</label>
+<input id="points" type="number" min="0" max="100">
+</section>
+<section>
+<h2>儲存與匯出</h2>
+<button class="primary" onclick="saveLevel()">儲存本關設定</button>
+<button onclick="exportData()">匯出 JSON</button>
+<button onclick="document.getElementById('file').click()">匯入 JSON</button>
+<input id="file" type="file" accept=".json,application/json" hidden onchange="importData(event)">
+<p id="status" class="status">尚未編輯</p>
+</section>
+</main>
+<script>
+const defaults=[
+{name:"第一關｜旅客突發身體不適",scene:"第一人稱視角，旅遊團體集合現場。",event:"旅客突然表示頭暈並坐下，需要領隊判斷處置順序。",npc:"身體不適的旅客",dialogue:"領隊，我突然覺得很不舒服。",mentor:"先確認現場安全、旅客意識與症狀，再判斷是否需要緊急協助。",goal:"練習緊急事故初步判斷、通報與團隊協作。",rubric:"辨識問題30分；處置順序30分；溝通與通報20分；AI協作20分。",points:100},
+{name:"第二關｜旅客走失事件",scene:"第一人稱視角，旅遊景點集合區。",event:"集合時發現一位旅客未到場。",npc:"同行團員",dialogue:"領隊，有一個人還沒回來！",mentor:"確認最後出現位置、聯絡方式及其他團員安全。",goal:"練習旅客走失事件的資訊蒐集與協調。",rubric:"資訊確認30分；處置30分；通報20分；AI協作20分。",points:100},
+{name:"第三關｜交通事故應變",scene:"第一人稱視角，遊覽車行程途中。",event:"車輛發生碰撞，部分旅客需要協助。",npc:"遊覽車司機",dialogue:"領隊，車子發生事故了！",mentor:"先確認現場是否安全，必要時請求緊急救援。",goal:"練習交通事故的安全判斷與緊急協作。",rubric:"安全確認30分；救援與通報30分；旅客安置20分；AI協作20分。",points:100}
+];
+const key="travel_ai_studio_v01";
+let data;
+try{
+const saved=JSON.parse(localStorage.getItem(key));
+data=Array.isArray(saved)&&saved.length===3?saved:defaults;
+}catch(e){data=defaults;}
+const fields=["name","scene","event","npc","dialogue","mentor","goal","rubric","points"];
+const select=document.getElementById("level");
+data.forEach((x,i)=>{
+const o=document.createElement("option");
+o.value=i;o.textContent="第"+(i+1)+"關";
+select.appendChild(o);
+});
+function loadLevel(){
+const item=data[Number(select.value)];
+fields.forEach(k=>document.getElementById(k).value=item[k]??"");
+document.getElementById("status").textContent="已載入關卡設定";
+}
+function saveLevel(){
+const i=Number(select.value);
+fields.forEach(k=>{
+const v=document.getElementById(k).value;
+data[i][k]=k==="points"?Number(v):v;
+});
+localStorage.setItem(key,JSON.stringify(data));
+document.getElementById("status").textContent="已儲存在目前瀏覽器";
+}
+function exportData(){
+saveLevel();
+const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+const a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download="travel_ai_levels.json";
+a.click();
+setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+async function importData(e){
+const file=e.target.files[0];
+if(!file)return;
+try{
+const parsed=JSON.parse(await file.text());
+if(!Array.isArray(parsed)||parsed.length!==3||!parsed.every(x=>fields.every(k=>Object.hasOwn(x,k))))throw Error("格式不正確");
+data=parsed;
+localStorage.setItem(key,JSON.stringify(data));
+loadLevel();
+document.getElementById("status").textContent="匯入成功";
+}catch(err){alert("匯入失敗："+err.message);}
+e.target.value="";
+}
+loadLevel();
+</script>
+</body>
+</html>
