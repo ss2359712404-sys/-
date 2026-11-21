@@ -4,237 +4,206 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>TRAVEL AI｜消失的護照</title>
+<title>TRAVEL AI｜智慧領隊危機應變</title>
 <style>
+:root{
+  --gold:#e4c48d;--bg:#08131e;--panel:#112336;
+  --text:#f6f2e9;--muted:#b7c6d3;--line:#ffffff25;
+}
 *{box-sizing:border-box}
-:root{--gold:#d8b981;--ink:#101a28;--panel:#152333;--white:#f5f1e9}
-body{margin:0;background:#09111c;color:var(--white);font-family:system-ui,"Noto Sans TC",sans-serif}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,"Noto Sans TC",sans-serif}
 button,input{font:inherit}
 button{cursor:pointer}
-#game{position:relative;min-height:100dvh;overflow:hidden}
-#scene{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,10,20,.55),transparent 28%,transparent 65%,rgba(4,10,20,.86))}
-header{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:18px 22px}
-.logo{font-size:20px;font-weight:900;letter-spacing:3px;color:var(--gold)}
-.small{font-size:11px;letter-spacing:2px;color:#c9d2dd}
-.pill{border:1px solid #b9a07777;border-radius:99px;padding:8px 12px;background:#0c1725b8;font-size:12px}
-#hud{position:relative;z-index:2;display:flex;gap:8px;padding:0 20px;flex-wrap:wrap}
-.hudbox{background:#091625b8;border:1px solid #ffffff24;border-radius:12px;padding:9px 13px;font-size:12px}
-.hudbox b{color:var(--gold);font-size:16px}
-#intro{position:absolute;z-index:10;inset:0;background:linear-gradient(120deg,#07111dec,#17273bdc);display:flex;align-items:center;justify-content:center;padding:20px}
-.introcard{width:min(580px,100%);padding:34px;background:#101d2de8;border:1px solid #d8b98166;border-radius:22px;box-shadow:0 25px 90px #0009}
-.eyebrow{color:var(--gold);font-size:12px;letter-spacing:4px}
-h1{font-size:clamp(34px,7vw,58px);line-height:1.15;margin:16px 0}
-p{line-height:1.8;color:#d2d9e0}
-.primary{border:0;background:var(--gold);color:#142031;padding:13px 23px;border-radius:10px;font-weight:800}
-.secondary{border:1px solid #d8b98188;background:#172637;color:#fff;padding:11px 17px;border-radius:10px}
-#people{position:absolute;z-index:3;inset:0;pointer-events:none}
-.person{position:absolute;bottom:21%;width:110px;height:245px;pointer-events:auto;background:none;border:0;filter:drop-shadow(0 15px 15px #0007);transition:transform .2s}
-.person:hover,.person:active{transform:scale(1.06)}
-.person svg{width:100%;height:100%}
-.person .tag{position:absolute;left:50%;transform:translateX(-50%);bottom:-15px;white-space:nowrap;background:#0b1725eb;border:1px solid var(--gold);color:#f7e9cb;border-radius:20px;padding:7px 12px;font-size:12px}
-#guest{left:19%}#staff{left:55%;bottom:25%;transform:scale(.85)}#staff:hover{transform:scale(.9)}#leader{right:10%;transform:scale(.9)}#leader:hover{transform:scale(.95)}
-.hotspot{position:absolute;z-index:3;background:#102437dc;border:1px solid #d8b981aa;border-radius:50%;width:48px;height:48px;color:var(--gold);font-size:24px;box-shadow:0 0 20px #d8b98155}
-#desk{left:48%;top:47%}#bag{left:31%;bottom:20%}
-#bottom{position:absolute;z-index:4;bottom:15px;left:15px;right:15px;display:flex;justify-content:space-between;align-items:end;gap:12px;pointer-events:none}
-.mission{max-width:430px;background:#091827d9;border:1px solid #ffffff33;padding:14px 17px;border-radius:14px;pointer-events:auto}
-.mission b{color:var(--gold)}
-#mentorBtn{pointer-events:auto;background:#d8b981;color:#112031;border:0;border-radius:99px;padding:15px 20px;font-weight:900;box-shadow:0 5px 25px #0008}
-#dialogue,#mentor,#ending{position:absolute;z-index:20;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,calc(100% - 26px));max-height:85dvh;overflow:auto;background:#101e2ff5;border:1px solid #d8b98188;border-radius:18px;padding:23px;box-shadow:0 25px 90px #000b;display:none}
-.paneltop{display:flex;justify-content:space-between;align-items:center;color:var(--gold);font-weight:800;letter-spacing:1px}
-.close{background:none;border:0;color:white;font-size:25px}
-#dialogueText,#mentorText{line-height:1.8;margin:18px 0;color:#e7ebf0}
-.choices{display:grid;gap:9px}
-.choice{display:block;width:100%;text-align:left;background:#1c3045;color:#f3f4f5;border:1px solid #ffffff27;border-radius:11px;padding:13px}
-.choice:hover{border-color:var(--gold);background:#2a3e52}
-#mentorInput{width:100%;border:1px solid #ffffff55;background:#071321;color:white;border-radius:9px;padding:13px;margin:12px 0}
-#toast{position:absolute;z-index:30;top:95px;left:50%;transform:translateX(-50%);background:#14283a;border:1px solid var(--gold);border-radius:12px;padding:12px 18px;display:none;text-align:center;max-width:90%}
-#ending h2{font-size:32px;color:var(--gold)}
-#scoreBig{font-size:56px;font-weight:900;color:var(--gold)}
+button:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+#app{position:relative;min-height:100dvh;overflow:hidden;background:#101e2c}
+.hidden{display:none!important}
+.scene{position:absolute;inset:0;overflow:hidden}
+.scene svg{width:100%;height:100%;object-fit:cover}
+.tint{position:absolute;inset:0;background:linear-gradient(180deg,#07121dbb 0%,transparent 32%,transparent 57%,#07121de8 100%);pointer-events:none}
+.top{position:relative;z-index:3;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:16px 18px}
+.brand{font-size:19px;font-weight:900;letter-spacing:3px;color:var(--gold)}
+.sub{font-size:10px;letter-spacing:2px;color:#c3d0da}
+.actions{display:flex;gap:7px;align-items:center}
+.chip{border:1px solid #ffffff50;background:#0b192bc9;color:#fff;border-radius:30px;padding:9px 12px;font-size:12px}
+.hud{position:relative;z-index:3;display:flex;gap:8px;padding:0 16px;flex-wrap:wrap}
+.stat{background:#0b192bc9;border:1px solid var(--line);padding:9px 12px;border-radius:12px;font-size:12px}
+.stat strong{color:var(--gold);font-size:17px}
+.actors{position:absolute;z-index:4;inset:0;pointer-events:none}
+.actor{position:absolute;bottom:22%;width:110px;height:220px;border:0;background:none;pointer-events:auto;transition:transform .2s;filter:drop-shadow(0 15px 14px #0008)}
+.actor:hover{transform:translateY(-5px)}
+.actor svg{width:100%;height:100%}
+.actor span{position:absolute;bottom:-17px;left:50%;transform:translateX(-50%);white-space:nowrap;border:1px solid var(--gold);background:#102136ed;color:#fff0d2;padding:7px 12px;border-radius:25px;font-size:12px}
+.actor:nth-child(1){left:13%}
+.actor:nth-child(2){left:45%;bottom:25%}
+.actor:nth-child(3){right:11%}
+.object{position:absolute;z-index:4;border:1px solid var(--gold);background:#172b41dd;color:var(--gold);border-radius:50%;width:47px;height:47px;font-size:22px;box-shadow:0 0 18px #e4c48d77}
+#obj1{left:32%;bottom:24%}
+#obj2{right:31%;top:44%}
+.bottom{position:absolute;z-index:5;bottom:12px;left:12px;right:12px;display:flex;align-items:end;justify-content:space-between;gap:10px;pointer-events:none}
+.task{pointer-events:auto;max-width:470px;background:#0b192be8;border:1px solid var(--line);padding:13px 15px;border-radius:13px}
+.task b{color:var(--gold)}
+.task p{font-size:12px;margin:5px 0 0;color:#cbd6e0}
+.goldbtn{border:0;background:var(--gold);color:#142236;font-weight:800;padding:13px 20px;border-radius:10px}
+.outlinebtn{border:1px solid #d7b98599;background:#182b40;color:#fff;padding:12px 17px;border-radius:10px}
+#aiButton{pointer-events:auto;box-shadow:0 5px 25px #0007;border-radius:40px}
+.overlay{position:absolute;z-index:20;inset:0;background:#07111de9;display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto}
+.introbox{width:min(640px,100%);max-height:94dvh;overflow:auto;background:linear-gradient(145deg,#162c42,#0c1929);border:1px solid #e4c48d77;border-radius:22px;padding:30px;box-shadow:0 25px 80px #0009}
+.eyebrow{color:var(--gold);letter-spacing:3px;font-size:12px;font-weight:800}
+h1{font-size:clamp(34px,7vw,58px);line-height:1.15;margin:13px 0}
+h2{font-size:26px;color:var(--gold);margin:10px 0}
+p{line-height:1.75;color:#d5e0e8}
+.role{background:#ffffff0b;border-left:3px solid var(--gold);padding:14px 17px;margin:20px 0;border-radius:0 10px 10px 0}
+.role b{color:var(--gold)}
+.role div{line-height:1.8;margin-top:5px;font-size:14px}
+.introActions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.modal{position:absolute;z-index:15;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,calc(100% - 24px));max-height:85dvh;overflow:auto;background:#102237f8;border:1px solid #e4c48d88;border-radius:18px;padding:22px;box-shadow:0 25px 90px #000b}
+.modalHead{display:flex;justify-content:space-between;align-items:center;color:var(--gold);font-weight:900}
+.x{border:0;background:none;color:white;font-size:25px}
+.choices{display:grid;gap:9px;margin-top:14px}
+.choice{border:1px solid #ffffff35;border-radius:10px;background:#20364b;color:white;padding:13px;text-align:left;line-height:1.5}
+.choice:hover{border-color:var(--gold)}
+#dialogueText,#aiMessages{white-space:pre-wrap;line-height:1.8;margin:17px 0}
+#aiMessages{max-height:36dvh;overflow:auto;display:grid;gap:10px}
+.msg{padding:12px;border-radius:12px;font-size:14px;line-height:1.7}
+.msg.user{background:#344c61;margin-left:16%}
+.msg.bot{background:#1b3545;margin-right:12%;border-left:2px solid var(--gold)}
+#aiInput{width:100%;padding:13px;border-radius:10px;border:1px solid #ffffff55;background:#071522;color:white;margin:10px 0}
+.note{font-size:11px;color:#afc1d1}
+#toast{position:absolute;z-index:30;top:92px;left:50%;transform:translateX(-50%);max-width:90%;background:#183148;border:1px solid var(--gold);padding:12px 17px;border-radius:12px;display:none;text-align:center}
+#resultScore{font-size:52px;color:var(--gold);font-weight:900}
+#progress{font-size:13px;color:#d4dce3;margin-top:12px}
 @media(max-width:600px){
-header{padding:12px}.logo{font-size:17px}#hud{padding:0 10px}
-.person{width:76px;height:180px;bottom:27%}
-#guest{left:7%}#staff{left:47%;bottom:29%}#leader{right:2%}
-#desk{left:49%;top:43%}#bag{left:26%;bottom:23%}
-#bottom{bottom:9px;left:9px;right:9px}.mission{font-size:12px;max-width:65%}
-#mentorBtn{padding:13px;font-size:12px}
-.introcard{padding:24px}
+.top{padding:11px}.brand{font-size:15px}.sub{font-size:9px}
+.chip{padding:8px;font-size:11px}.hud{padding:0 10px}
+.stat{font-size:11px;padding:7px}
+.actor{width:80px;height:175px;bottom:28%}
+.actor:nth-child(1){left:4%}
+.actor:nth-child(2){left:39%;bottom:31%}
+.actor:nth-child(3){right:1%}
+#obj1{left:28%;bottom:24%}#obj2{right:29%;top:40%}
+.bottom{left:8px;right:8px}.task{max-width:65%;font-size:12px}
+#aiButton{padding:12px;font-size:12px}
+.introbox{padding:22px}
 }
 </style>
 </head>
 <body>
-<div id="game">
+<div id="app">
 
-<svg id="scene" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-<defs>
-<linearGradient id="wall" x2="0" y2="1"><stop stop-color="#34485a"/><stop offset="1" stop-color="#78818a"/></linearGradient>
-<linearGradient id="floor" x2="0" y2="1"><stop stop-color="#998e7e"/><stop offset="1" stop-color="#292d35"/></linearGradient>
-<linearGradient id="glass" x2="0" y2="1"><stop stop-color="#142f4c"/><stop offset="1" stop-color="#60859c"/></linearGradient>
-<linearGradient id="counter" x2="0" y2="1"><stop stop-color="#927a59"/><stop offset="1" stop-color="#302d31"/></linearGradient>
-<radialGradient id="light"><stop stop-color="#fff3c4" stop-opacity=".7"/><stop offset="1" stop-color="#fff3c4" stop-opacity="0"/></radialGradient>
-<pattern id="marble" width="140" height="90" patternUnits="userSpaceOnUse"><path d="M0 30Q60 15 140 70M-20 80Q50 100 130 5" fill="none" stroke="#ffffff" stroke-opacity=".07" stroke-width="2"/></pattern>
-</defs>
-<rect width="1200" height="800" fill="url(#wall)"/>
-<rect width="1200" height="90" fill="#172535"/>
-<rect y="88" width="1200" height="15" fill="#d0b17d"/>
-<rect x="45" y="112" width="340" height="390" fill="#d5c6ae"/>
-<rect x="60" y="125" width="310" height="360" fill="url(#glass)"/>
-<path d="M60 350L145 265L210 315L290 210L370 290V485H60Z" fill="#344e5e" opacity=".65"/>
-<path d="M60 400L160 320L220 360L330 275L370 330V485H60Z" fill="#1c3747"/>
-<path d="M210 125V485M60 320H370" stroke="#c8b89a" stroke-width="12"/>
-<rect x="410" y="120" width="735" height="345" fill="#5c6872"/>
-<rect x="440" y="140" width="675" height="295" fill="#3e4b59"/>
-<rect x="465" y="160" width="625" height="250" fill="#283847"/>
-<rect x="490" y="170" width="575" height="220" fill="#25323d"/>
-<text x="777" y="220" text-anchor="middle" fill="#e6ce9f" font-size="31" letter-spacing="9" font-family="serif">HOTEL AOI</text>
-<text x="777" y="250" text-anchor="middle" fill="#c5ad85" font-size="13" letter-spacing="7">TOKYO · JAPAN</text>
-<path d="M0 495L1200 495L1200 800H0Z" fill="url(#floor)"/>
-<path d="M0 495L1200 495L1200 800H0Z" fill="url(#marble)"/>
-<path d="M0 495L600 800M1200 495L600 800M200 495L420 800M1000 495L780 800" stroke="#ffffff" stroke-opacity=".13" stroke-width="3"/>
-<path d="M0 590H1200M0 700H1200" stroke="#fff" stroke-opacity=".08" stroke-width="3"/>
-<ellipse cx="760" cy="520" rx="420" ry="110" fill="#0a111a" opacity=".25"/>
-<path d="M450 390H1100L1150 465H405Z" fill="#d0b891"/>
-<path d="M405 465H1150V585H405Z" fill="url(#counter)"/>
-<path d="M405 465H1150" stroke="#eed3a3" stroke-width="8"/>
-<rect x="710" y="490" width="175" height="57" rx="3" fill="#4b3b30" stroke="#b39b74"/>
-<text x="797" y="525" text-anchor="middle" fill="#e5d2ae" font-size="19" letter-spacing="4">RECEPTION</text>
-<rect x="540" y="365" width="90" height="34" rx="4" fill="#182d3a"/>
-<rect x="548" y="372" width="74" height="20" fill="#80a4b0"/>
-<rect x="985" y="372" width="42" height="25" rx="3" fill="#e4d1aa"/>
-<rect x="70" y="525" width="245" height="85" rx="20" fill="#4c504f"/>
-<rect x="85" y="565" width="220" height="85" rx="18" fill="#6c6b64"/>
-<rect x="105" y="585" width="180" height="35" rx="10" fill="#898478"/>
-<rect x="80" y="640" width="18" height="55" fill="#292d32"/>
-<rect x="290" y="640" width="18" height="55" fill="#292d32"/>
-<rect x="320" y="460" width="20" height="150" fill="#433e32"/>
-<ellipse cx="330" cy="447" rx="55" ry="24" fill="#4b6952"/>
-<ellipse cx="305" cy="425" rx="45" ry="28" fill="#597a5e"/>
-<ellipse cx="348" cy="412" rx="45" ry="35" fill="#375b48"/>
-<ellipse cx="1090" cy="465" rx="55" ry="18" fill="#243c30"/>
-<rect x="1075" y="400" width="30" height="70" fill="#59483c"/>
-<circle cx="1090" cy="395" r="55" fill="#345747"/>
-<circle cx="1055" cy="378" r="40" fill="#426b51"/>
-<circle cx="1120" cy="365" r="40" fill="#3d6048"/>
-<circle cx="160" cy="90" r="170" fill="url(#light)"/>
-<circle cx="600" cy="90" r="170" fill="url(#light)"/>
-<circle cx="1040" cy="90" r="170" fill="url(#light)"/>
-<g stroke="#d5bb89" stroke-width="6" fill="#f5dfae"><path d="M160 0V90M600 0V90M1040 0V90"/><ellipse cx="160" cy="97" rx="30" ry="12"/><ellipse cx="600" cy="97" rx="30" ry="12"/><ellipse cx="1040" cy="97" rx="30" ry="12"/></g>
-</svg>
+<div class="scene" id="scene"></div>
+<div class="tint"></div>
 
-<div class="shade"></div>
-
-<header>
-<div><div class="logo">TRAVEL AI</div><div class="small">旅遊緊急事故處理模擬</div></div>
-<div class="pill">CHAPTER 01 · 東京飯店</div>
+<header class="top">
+<div>
+<div class="brand">TRAVEL AI</div>
+<div class="sub">智慧領隊危機應變模擬</div>
+</div>
+<div class="actions">
+<button class="chip" id="musicBtn" onclick="toggleMusic()">♫ 音樂：關</button>
+<button class="chip" onclick="openHelp()">？</button>
+</div>
 </header>
 
-<div id="hud">
-<div class="hudbox">應變分數 <b id="score">0</b></div>
-<div class="hudbox">線索 <b id="clues">0</b>/3</div>
-<div class="hudbox">經過時間 <b id="timer">00:00</b></div>
+<div class="hud">
+<div class="stat">關卡 <strong id="levelNum">1 / 3</strong></div>
+<div class="stat">應變分數 <strong id="score">0</strong></div>
+<div class="stat">線索 <strong id="clueCount">0 / 3</strong></div>
+<div class="stat">時間 <strong id="timer">00:00</strong></div>
 </div>
 
-<div id="people">
-<button class="person" id="guest" onclick="talk('guest')" aria-label="與陳小姐對話">
-<svg viewBox="0 0 110 250">
-<ellipse cx="55" cy="239" rx="40" ry="8" fill="#0005"/>
-<path d="M37 148L25 225H50L57 171L65 225H89L73 148Z" fill="#252b3d"/>
-<path d="M34 82Q55 72 77 84L88 159H23Z" fill="#c4a18c"/>
-<path d="M30 95L13 153L27 161L45 110M78 95L98 147L85 156L67 112" fill="#c4a18c"/>
-<path d="M29 47Q24 4 58 10Q90 8 85 59L78 90H31Z" fill="#302329"/>
-<ellipse cx="56" cy="56" rx="25" ry="33" fill="#e7bca2"/>
-<path d="M30 43Q38 12 75 30L82 48Q58 36 30 43" fill="#302329"/>
-<circle cx="46" cy="56" r="2" fill="#3c2b2a"/><circle cx="66" cy="56" r="2" fill="#3c2b2a"/>
-<path d="M48 74Q56 69 64 74" fill="none" stroke="#a76866" stroke-width="2"/>
-<rect x="43" y="105" width="28" height="8" rx="3" fill="#e7d5bc"/>
-</svg>
-<span class="tag">! 陳小姐</span>
-</button>
+<div class="actors" id="actors"></div>
+<button id="obj1" class="object" onclick="inspect(0)" aria-label="調查線索一">⌕</button>
+<button id="obj2" class="object" onclick="inspect(1)" aria-label="調查線索二">⌕</button>
 
-<button class="person" id="staff" onclick="talk('staff')" aria-label="與飯店櫃檯對話">
-<svg viewBox="0 0 110 250">
-<ellipse cx="55" cy="240" rx="40" ry="8" fill="#0005"/>
-<path d="M35 140L30 230H51L57 160L64 230H85L76 140Z" fill="#202b37"/>
-<path d="M30 85L80 85L90 155H20Z" fill="#1e3042"/>
-<path d="M32 87L55 122L79 87" fill="#f0ede8"/>
-<path d="M54 102L48 136L55 145L62 136Z" fill="#a58b64"/>
-<ellipse cx="55" cy="52" rx="25" ry="31" fill="#dfb497"/>
-<path d="M30 45Q22 10 55 14Q90 10 81 46Q57 31 30 45" fill="#24252b"/>
-<circle cx="46" cy="55" r="2" fill="#343434"/><circle cx="65" cy="55" r="2" fill="#343434"/>
-<path d="M48 70Q55 75 64 70" fill="none" stroke="#a36b5d" stroke-width="2"/>
-<rect x="65" y="113" width="17" height="8" rx="2" fill="#c6b28c"/>
-</svg>
-<span class="tag">飯店櫃檯</span>
-</button>
-
-<button class="person" id="leader" onclick="talk('leader')" aria-label="與同行團員對話">
-<svg viewBox="0 0 110 250">
-<ellipse cx="55" cy="240" rx="40" ry="8" fill="#0005"/>
-<path d="M36 143L28 231H49L56 164L66 231H87L74 143Z" fill="#263342"/>
-<path d="M31 86L78 86L87 150H23Z" fill="#6b7c77"/>
-<path d="M29 94L13 147L28 153L42 108M80 95L97 149L84 155L68 108" fill="#6b7c77"/>
-<ellipse cx="55" cy="55" rx="25" ry="32" fill="#e1b89c"/>
-<path d="M30 48Q26 12 56 16Q85 14 80 48L70 33L33 43Z" fill="#33302e"/>
-<circle cx="46" cy="57" r="2" fill="#302b29"/><circle cx="65" cy="57" r="2" fill="#302b29"/>
-<path d="M49 72Q56 76 63 72" fill="none" stroke="#946d60" stroke-width="2"/>
-</svg>
-<span class="tag">同行團員</span>
-</button>
+<div class="bottom">
+<div class="task">
+<div class="sub">CURRENT MISSION</div>
+<b id="objective">等待任務開始</b>
+<p>點擊人物與調查標記，蒐集線索並做出決策。</p>
+</div>
+<button class="goldbtn" id="aiButton" onclick="openAI()">✦ AI 導師</button>
 </div>
 
-<button class="hotspot" id="desk" onclick="inspect('desk')" aria-label="查看櫃檯紀錄">⌕</button>
-<button class="hotspot" id="bag" onclick="inspect('bag')" aria-label="查看行李">⌕</button>
-
-<div id="bottom">
-<div class="mission">
-<div class="small">CURRENT OBJECTIVE</div>
-<b id="objective">與陳小姐對話，了解護照遺失事件</b>
-<div style="margin-top:6px;color:#c9d2dd;font-size:12px">點擊人物或發光的調查標記進行互動</div>
+<div id="intro" class="overlay">
+<div class="introbox">
+<div class="eyebrow">INTERACTIVE LEARNING EXPERIENCE</div>
+<h1>TRAVEL AI<br><span style="color:var(--gold)">智慧領隊</span></h1>
+<p>一場旅行，三次突發事故。你做出的每個決定，都可能影響旅客的安全、信任與行程。</p>
+<div class="role">
+<b>你的角色｜海外旅行團領隊</b>
+<div>
+你負責帶領 15 位旅客出國旅遊。除了行程安排，你還需要處理突發事件、協調各方資源、安撫旅客情緒，並維護團體安全。
 </div>
-<button id="mentorBtn" onclick="openMentor()">✦ AI 導師</button>
 </div>
-
-<div id="intro">
-<div class="introcard">
-<div class="eyebrow">IMMERSIVE LEARNING · PROTOTYPE</div>
-<h1>消失的<br><span style="color:var(--gold)">護照</span></h1>
-<p>東京，上午 08:30。你是一名帶領 15 人旅行團的領隊。即將出發前往淺草寺時，一名團員突然發現護照不見了。</p>
-<p>你需要蒐集資訊、安撫旅客、協調飯店與旅行社，做出適當的緊急處置。</p>
-<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-<button class="primary" onclick="start()">開始執行任務 →</button>
-<span class="small">手機、電腦皆可操作</span>
+<div class="role">
+<b>你的任務</b>
+<div>
+第一關：東京飯店｜護照遺失<br>
+第二關：曼谷市集｜團員走散<br>
+第三關：仁川機場｜航班取消
+</div>
+</div>
+<p class="note">這是研究用遊戲原型。AI 導師目前採免費離線引導，尚未連接生成式 AI 模型。</p>
+<div class="introActions">
+<button class="goldbtn" onclick="begin()">接受任務，開始遊戲 →</button>
+<button class="outlinebtn" onclick="toggleMusic()" id="introMusic">♫ 開啟背景音樂</button>
 </div>
 </div>
 </div>
 
-<div id="dialogue">
-<div class="paneltop"><span id="speaker">人物</span><button class="close" onclick="closePanel()">×</button></div>
+<div id="briefing" class="overlay hidden">
+<div class="introbox">
+<div class="eyebrow" id="briefTag">CHAPTER 01</div>
+<h1 id="briefTitle">消失的護照</h1>
+<p id="briefDesc"></p>
+<div class="role">
+<b>本關學習目標</b>
+<div id="briefGoal"></div>
+</div>
+<button class="goldbtn" onclick="enterLevel()">進入情境 →</button>
+</div>
+</div>
+
+<div id="dialogue" class="modal hidden">
+<div class="modalHead">
+<span id="speaker"></span>
+<button class="x" onclick="closeDialogue()">×</button>
+</div>
 <div id="dialogueText"></div>
 <div id="choices" class="choices"></div>
 </div>
 
-<div id="mentor">
-<div class="paneltop"><span>✦ TRAVEL AI｜模擬導師</span><button class="close" onclick="document.getElementById('mentor').style.display='none'">×</button></div>
-<p class="small">本初版採規則式引導，尚未串接生成式 AI API。</p>
-<div id="mentorText">你可以詢問我如何處理這起旅遊緊急事故。</div>
-<div class="choices">
-<button class="choice" onclick="ask('第一步應該怎麼做？')">第一步應該怎麼做？</button>
-<button class="choice" onclick="ask('如何安撫旅客？')">如何安撫旅客？</button>
-<button class="choice" onclick="ask('團體行程怎麼安排？')">團體行程怎麼安排？</button>
+<div id="aiPanel" class="modal hidden">
+<div class="modalHead">
+<span>✦ TRAVEL AI｜提問式導師</span>
+<button class="x" onclick="closeAI()">×</button>
 </div>
-<input id="mentorInput" placeholder="輸入你想詢問的問題">
-<button class="secondary" onclick="ask(document.getElementById('mentorInput').value)">送出問題</button>
+<p class="note">離線教學原型：可自由提問及連續對話，但不是真正的生成式 AI。</p>
+<div id="aiMessages"></div>
+<div class="choices">
+<button class="choice" onclick="askAI('我現在應該先做什麼？')">我現在應該先做什麼？</button>
+<button class="choice" onclick="askAI('我要怎麼安撫旅客？')">我要怎麼安撫旅客？</button>
+</div>
+<input id="aiInput" placeholder="自由輸入你的問題">
+<button class="goldbtn" onclick="askAI(document.getElementById('aiInput').value)">送出提問</button>
 </div>
 
-<div id="ending">
-<div class="eyebrow">MISSION COMPLETED</div>
-<h2>事故處理結算</h2>
-<div id="scoreBig">0</div>
-<p id="feedback"></p>
-<div id="summary"></div>
-<div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:20px">
-<button class="primary" onclick="downloadLog()">匯出學習紀錄</button>
-<button class="secondary" onclick="location.reload()">重新挑戰</button>
+<div id="result" class="overlay hidden">
+<div class="introbox">
+<div class="eyebrow">MISSION REPORT</div>
+<h2 id="resultTitle">關卡完成</h2>
+<div id="resultScore">0 / 100</div>
+<p id="resultFeedback"></p>
+<div class="role">
+<b>學習紀錄</b>
+<div id="resultDetail"></div>
+</div>
+<div class="introActions">
+<button class="goldbtn" id="nextBtn" onclick="nextLevel()">下一關 →</button>
+<button class="outlinebtn" onclick="exportLog()">匯出操作紀錄</button>
+<button class="outlinebtn" onclick="restart()">重新開始</button>
+</div>
 </div>
 </div>
 
@@ -242,101 +211,656 @@ header{padding:12px}.logo{font-size:17px}#hud{padding:0 10px}
 </div>
 
 <script>
+"use strict";
+
 const $=id=>document.getElementById(id);
-let score=0,clues=new Set(),flags=new Set(),logs=[],startAt=0,clock=null,finished=false;
-const record=(type,value)=>logs.push({seconds:Math.floor((Date.now()-startAt)/1000),type,value});
-function start(){
-$('intro').style.display='none';
-startAt=Date.now();
-clock=setInterval(()=>{let t=Math.floor((Date.now()-startAt)/1000);$('timer').textContent=String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0')},1000);
-record('start','東京飯店護照遺失');
-toast('任務開始：先了解旅客的情況');
+
+const levels=[
+{
+city:"東京 · 日本",
+title:"消失的護照",
+desc:"上午 08:30，你正準備帶領 15 位旅客前往淺草寺。陳小姐突然表示護照不見了，其他團員正在飯店大廳等待。",
+goal:"確認護照最後使用位置、協助旅客檢查物品、請飯店協助核對，並兼顧團體行程。",
+objective:"與陳小姐對話，了解護照遺失經過",
+actors:["陳小姐","飯店櫃檯","同行團員"],
+intro:[
+"領隊！我找不到護照了！昨天入住時明明還有拿出來，現在怎麼辦？",
+"早安，請問需要我們協助確認什麼事情？",
+"領隊，大家都在等候出發，現在行程怎麼安排？"
+],
+choices:[
+[
+["先安撫旅客，詢問最後使用護照的時間與地點",20,"陳小姐回想起昨晚在飯店辦理入住時使用過護照。"],
+["要求旅客自行負責，不介入處理",-10,"旅客更加焦慮，仍無法確定護照在哪裡。"],
+["立刻取消所有團員的行程",-5,"你在資訊不足時做出了影響全團的決定。"]
+],
+[
+["說明情況，請飯店協助核對入住及失物紀錄",20,"櫃檯同意依飯店程序協助確認。"],
+["直接指責飯店弄丟護照",-10,"櫃檯表示目前尚無法確認遺失環節。"],
+["不向飯店求助，直接離開",0,"你失去了一個重要的查證機會。"]
+],
+[
+["向團員說明已確認的情況，並聯繫旅行社協調",20,"團員了解安排，旅行社也開始協助。"],
+["不告知團員，讓大家一直等待",-10,"團員因缺乏資訊而產生不滿。"],
+["請其他團員自行活動，不做任何交代",-5,"團體管理與安全風險增加。"]
+]
+],
+objects:[
+["旅客隨身物品","徵得同意後，請旅客自行檢查背包、衣物及行李夾層。"],
+["飯店交接紀錄","確認飯店是否能協助核對入住交接及失物招領紀錄。"]
+],
+ai:{
+first:"你目前掌握哪些資訊？旅客最後一次使用護照是在什麼地方？",
+calm:"你可以先承認旅客的焦慮，說明你會協助調查。接著問自己：哪些資訊已確認？哪些仍只是推測？",
+group:"其他團員也需要被照顧。你會如何說明目前狀況，並與旅行社協調接下來的行程？",
+action:"先確認最後使用地點、請旅客檢查物品、向飯店查證，再依確認結果聯繫旅行社及查詢官方協助程序。"
 }
-function toast(msg){$('toast').textContent=msg;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',2600)}
-function points(n){score=Math.max(0,Math.min(100,score+n));$('score').textContent=score}
-function addClue(id,label){
-if(!clues.has(id)){clues.add(id);$('clues').textContent=clues.size;record('clue',label);toast('取得線索：'+label);if(clues.size===3)$('objective').textContent='線索已蒐集，請完成最終處置'}
+},
+{
+city:"曼谷 · 泰國",
+title:"團員走散了",
+desc:"下午 16:20，旅行團正在曼谷觀光市集自由活動。集合時發現一位團員沒有回來，電話也暫時無法接通。",
+goal:"確認失聯者最後位置、維持團體安全、分工聯繫並評估當地支援需求。",
+objective:"詢問同行旅客，確認失聯團員資訊",
+actors:["同行旅客","市集工作人員","協助領隊"],
+intro:[
+"我剛才還有看到他，他說想去旁邊買東西，現在卻找不到人！",
+"您好，請問發生什麼事情？需要市集方面協助嗎？",
+"領隊，其他團員都在集合點了，我們現在怎麼辦？"
+],
+choices:[
+[
+["詢問最後見面位置、時間及失聯者特徵",20,"你取得了最後目擊地點與大致時間。"],
+["責怪同行旅客沒有看好對方",-10,"同行旅客感到不安，資訊仍未釐清。"],
+["不詢問細節，直接到處亂找",-5,"搜尋範圍過大，也缺乏有效資訊。"]
+],
+[
+["提供失聯者特徵，詢問服務台與可用協助管道",20,"工作人員願意協助聯繫服務台。"],
+["要求工作人員保證立刻找到人",-5,"工作人員無法作出這種保證。"],
+["完全不尋求現場協助",0,"你錯失可能有用的當地資源。"]
+],
+[
+["安排團員留在安全集合點，分工聯繫並回報旅行社",20,"團體秩序得到維持，搜尋工作更有方向。"],
+["要求所有團員分散到各處自行尋人",-10,"可能造成更多團員走散。"],
+["直接帶全團離開，不再等待",-15,"失聯旅客可能面臨更高風險。"]
+]
+],
+objects:[
+["集合地點","確認集合點位置及辨識標誌，方便失聯者返回。"],
+["聯絡紀錄","確認最後通話、訊息及可能的聯絡方式。"]
+],
+ai:{
+first:"你目前知道失聯者最後出現在哪裡嗎？其他團員是否都在安全的集合點？",
+calm:"面對焦慮的團員，可以先說明正在確認的資訊與具體分工。你能避免哪些不必要的恐慌？",
+group:"請優先維持其餘團員的安全與集合秩序，不要讓所有人各自分散尋找。",
+action:"確認最後目擊資訊、建立安全集合點、分工聯繫、尋求現場協助，並視風險與情況聯絡當地相關單位。"
 }
-function show(speaker,text,options){
-$('speaker').textContent=speaker;$('dialogueText').textContent=text;
-$('choices').innerHTML='';
-options.forEach(o=>{let b=document.createElement('button');b.className='choice';b.textContent=o[0];b.onclick=o[1];$('choices').appendChild(b)});
-$('dialogue').style.display='block';
+},
+{
+city:"仁川 · 韓國",
+title:"航班突然取消",
+desc:"晚上 19:10，旅行團抵達仁川機場準備返台，卻得知原定航班取消。團員開始擔心住宿、轉機與返國安排。",
+goal:"確認航空公司正式資訊、評估替代交通與住宿、照顧特殊需求並清楚溝通。",
+objective:"先向航空公司確認航班取消資訊",
+actors:["航空公司人員","焦慮旅客","旅行社窗口"],
+intro:[
+"您好，原定航班目前顯示取消，請問您需要確認哪些資訊？",
+"領隊！我明天還要上班，現在怎麼辦？我們是不是回不去了？",
+"我已經接到消息，請先提供航空公司的正式說明與團員需求。"
+],
+choices:[
+[
+["確認取消原因、可提供的替代方案及正式通知",20,"你取得了航空公司目前可確認的處理資訊。"],
+["未確認就要求航空公司保證立刻起飛",-10,"你提出了航空公司無法承諾的要求。"],
+["不詢問任何資訊，直接離開機場",-10,"你尚未掌握替代安排。"]
+],
+[
+["安撫旅客，確認緊急需求並說明目前已知資訊",20,"旅客開始理解處理進度，也提出必要需求。"],
+["告訴所有人一定明早回國",-10,"在尚未確認前作出不可靠的承諾。"],
+["拒絕回答任何問題",-5,"旅客的不安持續增加。"]
+],
+[
+["與旅行社共同確認改票、住宿、交通與特殊需求",20,"旅行社開始協助協調替代方案。"],
+["未確認費用與安排就自行承諾全部免費",-10,"可能造成後續費用與責任爭議。"],
+["把所有問題都交給旅客自行處理",-10,"領隊未履行應有的協調工作。"]
+]
+],
+objects:[
+["航班資訊看板","核對航班號碼與狀態，並以航空公司正式資訊為準。"],
+["旅客需求清單","整理有醫療、住宿、工作時程等特殊需求的旅客。"]
+],
+ai:{
+first:"你目前取得航空公司的正式通知了嗎？哪些安排已經確認，哪些還不能保證？",
+calm:"先向旅客說明目前確定的事實，再告訴他們下一次更新資訊的時間。你能避免哪些過度承諾？",
+group:"請整理團員的特殊需求，並與旅行社及航空公司協調替代安排。",
+action:"先取得正式航班資訊，再確認改票、住宿、交通及費用安排，並持續向旅客更新進度。"
 }
-function closePanel(){$('dialogue').style.display='none'}
-function once(id,n){if(!flags.has(id)){flags.add(id);points(n)}}
-function talk(who){
-if(!startAt){toast('請先開始任務');return}
-if(finished)return;
-record('interaction',who);
-if(who==='guest'){
-show('陳小姐','領隊！我的護照不見了！昨天入住時明明還有拿出來，等一下就要出發了，我現在該怎麼辦？',[
-['先安撫旅客，詢問最後一次看到護照的時間與地點',()=>{once('reassure',20);addClue('guest','最後在飯店入住時使用護照');show('陳小姐','謝謝你。我記得昨晚辦理入住時有拿護照給櫃檯，後來可能放回包包，但我不確定。',[['了解，我會協助確認並同步安排團體行程',()=>{once('plan',10);closePanel();$('objective').textContent='向飯店櫃檯確認護照線索'}]])}],
-['要求旅客自行尋找，不介入處理',()=>{once('dismiss',-10);record('decision','要求旅客自行處理');show('陳小姐','可是我不知道該從哪裡找起……',[['重新詢問她最後使用護照的地點',()=>talk('guest')]])}],
-['立即宣布取消全團行程',()=>{once('cancel',-5);record('decision','未查明前取消全團行程');show('陳小姐','其他團員也需要等我嗎？我們是不是應該先確認護照在哪裡？',[['重新調查',()=>talk('guest')]])}]
-]);return}
-if(who==='staff'){
-show('飯店櫃檯','早安，請問需要什麼協助？',[
-['說明旅客護照遺失，請櫃檯協助確認入住紀錄與失物招領',()=>{once('staff',20);addClue('staff','櫃檯願意協助核對入住與失物紀錄');show('飯店櫃檯','我們可以依飯店規定協助確認交接及失物招領紀錄，也請旅客同步查看隨身物品。',[['謝謝，我會持續追蹤確認結果',closePanel]])}],
-['直接指責飯店弄丟護照',()=>{once('blame',-5);show('飯店櫃檯','我們理解您的著急，但目前尚未確認護照遺失的環節。',[['改以合作方式請求協助',()=>talk('staff')]])}]
-]);return}
-if(who==='leader'){
-show('同行團員','領隊，我們原定 9 點出發，其他人都在等候，現在怎麼安排？',[
-['先向團員說明狀況，協調等候或分組安排，並聯繫旅行社',()=>{once('group',20);record('decision','團體協調並聯繫旅行社');show('同行團員','了解，至少大家知道發生什麼事，也不會一直乾等。',[['繼續處理護照事件',closePanel]])}],
-['先不告知任何人，讓大家繼續等',()=>{once('hide',-5);show('同行團員','可是團員們已經開始詢問了。',[['重新安排團體溝通',()=>talk('leader')]])}]
-]);return}
 }
-function inspect(who){
-if(!startAt){toast('請先開始任務');return}
-if(who==='bag'){
-show('行李調查','陳小姐的隨身包、外套口袋與行李夾層尚未完整檢查。',[
-['徵得同意後，請旅客親自逐一確認物品',()=>{once('bag',15);addClue('bag','旅客已重新檢查隨身物品');show('調查結果','目前仍未找到護照。需要繼續核對飯店紀錄，並準備後續協助方案。',[['繼續調查',closePanel]])}],
-['不經同意直接翻找旅客行李',()=>{once('privacy',-10);show('調查結果','旅客表示不舒服。處理緊急事件仍須尊重旅客隱私。',[['改為請旅客自行檢查',()=>inspect('bag')]])}]
-]);return}
-show('櫃檯紀錄','飯店可協助核對入住時的交接流程及失物招領紀錄，尚不能直接判定護照由誰保管。',[
-['請飯店協助核對，並記錄已確認與待確認事項',()=>{once('records',10);record('investigation','核對櫃檯紀錄');show('調查紀錄','已提出核對需求。若仍找不到護照，應依所在地規定及旅行社協助流程確認下一步。',[['繼續處理',closePanel]])}]
-])
+];
+
+let levelIndex=0;
+let totalScore=0;
+let levelScore=0;
+let clues=new Set();
+let decisions=new Set();
+let logs=[];
+let history=[];
+let startTime=0;
+let timerHandle=null;
+let phase="intro";
+
+function log(type,data){
+logs.push({
+level:levelIndex+1,
+time:new Date().toISOString(),
+type,data
+});
 }
-function openMentor(){
-if(!startAt){toast('請先開始任務');return}
-$('mentor').style.display='block';
-record('mentor_open','開啟模擬導師');
+
+function notify(message){
+$("toast").textContent=message;
+$("toast").style.display="block";
+clearTimeout(notify.handle);
+notify.handle=setTimeout(()=>$("toast").style.display="none",2700);
 }
-function ask(q){
-q=(q||'').trim();if(!q)return;
-let answer='';
-if(/安撫|情緒|旅客/.test(q))answer='先承認旅客的焦慮，清楚說明你會協助處理，再詢問最後使用護照的時間、地點。避免責備或給出未經確認的保證。';
-else if(/團|行程|其他|安排/.test(q))answer='除了協助遺失護照的旅客，也要照顧其他團員。向團員說明已確認的資訊，評估等候、分組及旅行社支援，避免未溝通就取消全部行程。';
-else if(/護照|遺失|找|第一步|處理/.test(q))answer='建議順序：確認旅客安全與情緒 → 詢問最後使用地點 → 檢查隨身物品 → 請飯店協助核對 → 聯繫旅行社 → 如確定遺失，再查詢官方規定及駐外機構協助方式。';
-else answer='可以先把問題拆成三部分：目前確認了什麼？還缺少什麼資訊？下一步由誰負責？請根據已查明的事實再做決策。';
-$('mentorText').textContent='你的問題：'+q+'\n\n導師建議：'+answer;
-$('mentorText').style.whiteSpace='pre-line';
-$('mentorInput').value='';
-once('ai',10);record('mentor_question',q);record('mentor_response',answer);
+
+function updateHUD(){
+$("levelNum").textContent=(levelIndex+1)+" / 3";
+$("score").textContent=levelScore;
+$("clueCount").textContent=clues.size+" / 3";
 }
-function finish(){
-if(clues.size<3){toast('請先蒐集三項關鍵線索');return}
-finished=true;clearInterval(clock);closePanel();$('mentor').style.display='none';
-record('finish',{score,clues:[...clues]});
-$('scoreBig').textContent=score+' / 100';
-$('feedback').textContent=score>=80?'你已完成主要調查與協調，能兼顧旅客情緒及團體安排。':score>=50?'你已掌握部分處理程序，但仍可改善資訊確認、旅客溝通或團體協調。':'建議重新挑戰，優先蒐集資訊、安撫旅客，避免未查證就下結論。';
-$('summary').textContent='已蒐集 '+clues.size+' 項線索，使用 AI 導師 '+logs.filter(x=>x.type==='mentor_question').length+' 次。此分數為原型示範評分，尚非經研究驗證的量表。';
-$('ending').style.display='block';
+
+function begin(){
+$("intro").classList.add("hidden");
+startMusic();
+showBriefing();
 }
-function downloadLog(){
-let data={game:'TRAVEL AI V1.0',scenario:'消失的護照',score,clues:[...clues],logs};
-let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='travel-ai-learning-log.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+
+function showBriefing(){
+phase="briefing";
+let L=levels[levelIndex];
+$("briefTag").textContent="CHAPTER 0"+(levelIndex+1)+" · "+L.city;
+$("briefTitle").textContent=L.title;
+$("briefDesc").textContent=L.desc;
+$("briefGoal").textContent=L.goal;
+$("briefing").classList.remove("hidden");
 }
-const finishBtn=document.createElement('button');
-finishBtn.textContent='完成事故處置 →';
-finishBtn.className='primary';
-finishBtn.style.cssText='position:absolute;z-index:5;bottom:105px;right:15px;display:none';
-finishBtn.onclick=finish;
-$('game').appendChild(finishBtn);
-setInterval(()=>{
-if(startAt&&!finished&&clues.size===3)finishBtn.style.display='block';
-},400);
+
+function enterLevel(){
+phase="playing";
+$("briefing").classList.add("hidden");
+$("result").classList.add("hidden");
+$("dialogue").classList.add("hidden");
+$("aiPanel").classList.add("hidden");
+levelScore=0;
+clues=new Set();
+decisions=new Set();
+history=[];
+startTime=Date.now();
+clearInterval(timerHandle);
+timerHandle=setInterval(()=>{
+let sec=Math.floor((Date.now()-startTime)/1000);
+$("timer").textContent=
+String(Math.floor(sec/60)).padStart(2,"0")+":"+
+String(sec%60).padStart(2,"0");
+},1000);
+$("timer").textContent="00:00";
+$("objective").textContent=levels[levelIndex].objective;
+renderScene();
+renderActors();
+updateHUD();
+log("level_start",levels[levelIndex].title);
+notify("新任務開始：請先蒐集資訊");
+}
+
+function renderScene(){
+let palette=[
+{sky:"#30465b",wall:"#667583",floor:"#82776e",accent:"#d6bc8c",name:"HOTEL AOI",sub:"TOKYO · JAPAN"},
+{sky:"#253e56",wall:"#74594d",floor:"#695b4c",accent:"#e7bd78",name:"BANGKOK MARKET",sub:"THAILAND"},
+{sky:"#243a52",wall:"#6b7b8b",floor:"#5a626b",accent:"#d9c5a0",name:"INCHEON AIRPORT",sub:"DEPARTURES"}
+][levelIndex];
+
+let extra="";
+if(levelIndex===0){
+extra=`
+<rect x="60" y="140" width="310" height="350" fill="#29465c"/>
+<path d="M60 410L150 300L230 350L320 240L370 300V490H60Z" fill="#182f42"/>
+<path d="M215 140V490M60 315H370" stroke="#c7b69b" stroke-width="11"/>
+<path d="M430 390H1110L1160 465H390Z" fill="#d5ba8b"/>
+<rect x="390" y="465" width="770" height="135" fill="#56483e"/>
+<rect x="665" y="485" width="225" height="65" rx="4" fill="#3a342e"/>
+<text x="777" y="525" font-size="23" text-anchor="middle" fill="#e5cc9c">RECEPTION</text>
+<rect x="65" y="560" width="280" height="95" rx="25" fill="#62635e"/>
+<rect x="95" y="590" width="230" height="75" rx="18" fill="#84817a"/>
+`;
+}
+if(levelIndex===1){
+extra=`
+<path d="M0 270L200 190L400 270L600 190L800 270L1000 190L1200 270" fill="none" stroke="#f0c17d" stroke-width="7"/>
+<g fill="#e9ae6c">
+<circle cx="140" cy="245" r="13"/><circle cx="330" cy="245" r="13"/>
+<circle cx="525" cy="245" r="13"/><circle cx="720" cy="245" r="13"/>
+<circle cx="915" cy="245" r="13"/><circle cx="1110" cy="245" r="13"/>
+</g>
+<rect x="55" y="340" width="345" height="220" fill="#654334"/>
+<path d="M35 335L220 260L420 335Z" fill="#a45540"/>
+<rect x="800" y="340" width="340" height="220" fill="#584334"/>
+<path d="M780 335L970 260L1160 335Z" fill="#b27446"/>
+<rect x="80" y="390" width="290" height="40" fill="#dfb477"/>
+<rect x="830" y="390" width="275" height="40" fill="#e0a66e"/>
+<rect x="470" y="340" width="260" height="210" fill="#394f4e"/>
+<rect x="490" y="360" width="220" height="65" fill="#d4ae76"/>
+<text x="600" y="402" font-size="22" text-anchor="middle" fill="#46362c">INFO POINT</text>
+`;
+}
+if(levelIndex===2){
+extra=`
+<rect x="50" y="130" width="1100" height="325" fill="#294459"/>
+<path d="M50 280H1150M275 130V455M500 130V455M725 130V455M950 130V455" stroke="#b8c5cc" stroke-width="11"/>
+<path d="M50 400L270 280L470 350L720 260L950 335L1150 275V455H50Z" fill="#3d5867" opacity=".8"/>
+<rect x="360" y="220" width="480" height="140" rx="9" fill="#15232e" stroke="#98acb8" stroke-width="5"/>
+<text x="600" y="265" font-size="28" text-anchor="middle" fill="#e5d7b6">DEPARTURES</text>
+<text x="600" y="315" font-size="24" text-anchor="middle" fill="#ffbd8a">FLIGHT CANCELLED</text>
+<rect x="80" y="510" width="270" height="60" rx="12" fill="#8c9ca7"/>
+<rect x="850" y="510" width="270" height="60" rx="12" fill="#8c9ca7"/>
+`;
+}
+
+$("scene").innerHTML=`
+<svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="w" x2="0" y2="1">
+<stop stop-color="${palette.sky}"/>
+<stop offset="1" stop-color="${palette.wall}"/>
+</linearGradient>
+<linearGradient id="f" x2="0" y2="1">
+<stop stop-color="${palette.floor}"/>
+<stop offset="1" stop-color="#222d39"/>
+</linearGradient>
+<radialGradient id="glow">
+<stop stop-color="#fff1bb" stop-opacity=".6"/>
+<stop offset="1" stop-color="#fff1bb" stop-opacity="0"/>
+</radialGradient>
+</defs>
+<rect width="1200" height="800" fill="url(#w)"/>
+<rect width="1200" height="100" fill="#152637"/>
+<rect y="95" width="1200" height="10" fill="${palette.accent}"/>
+<rect x="410" y="135" width="735" height="270" fill="#273949" opacity=".75"/>
+<text x="780" y="195" text-anchor="middle" font-size="29" fill="${palette.accent}" letter-spacing="6">${palette.name}</text>
+<text x="780" y="225" text-anchor="middle" font-size="13" fill="#d4dce0" letter-spacing="6">${palette.sub}</text>
+<path d="M0 490H1200V800H0Z" fill="url(#f)"/>
+<path d="M0 490L600 800M1200 490L600 800M200 490L400 800M1000 490L800 800" stroke="#ffffff" stroke-opacity=".13" stroke-width="3"/>
+<path d="M0 600H1200M0 700H1200" stroke="#ffffff" stroke-opacity=".09" stroke-width="3"/>
+${extra}
+<circle cx="170" cy="100" r="170" fill="url(#glow)"/>
+<circle cx="600" cy="100" r="170" fill="url(#glow)"/>
+<circle cx="1030" cy="100" r="170" fill="url(#glow)"/>
+<g stroke="${palette.accent}" stroke-width="5" fill="#fff1c9">
+<path d="M170 0V95M600 0V95M1030 0V95"/>
+<ellipse cx="170" cy="100" rx="30" ry="11"/>
+<ellipse cx="600" cy="100" rx="30" ry="11"/>
+<ellipse cx="1030" cy="100" rx="30" ry="11"/>
+</g>
+</svg>`;
+}
+
+function personSVG(i){
+const coats=["#c7a08e","#31475c","#71847d"];
+const skins=["#e9c1a5","#d8a88c","#dfb59b"];
+const hairs=["#34272b","#272b32","#41352e"];
+return `
+<svg viewBox="0 0 110 230" xmlns="http://www.w3.org/2000/svg">
+<ellipse cx="55" cy="220" rx="37" ry="9" fill="#0005"/>
+<path d="M35 137L28 213H50L56 158L64 213H85L76 137Z" fill="#273140"/>
+<path d="M31 77Q55 69 79 77L89 145H20Z" fill="${coats[i]}"/>
+<path d="M30 92L14 145L28 152L43 103M80 92L96 145L82 152L67 103" fill="${coats[i]}"/>
+<ellipse cx="55" cy="51" rx="26" ry="32" fill="${skins[i]}"/>
+<path d="M29 48Q23 10 56 13Q88 12 82 49Q65 31 29 48Z" fill="${hairs[i]}"/>
+<circle cx="46" cy="54" r="2" fill="#302a2a"/>
+<circle cx="65" cy="54" r="2" fill="#302a2a"/>
+<path d="M48 71Q55 75 64 71" fill="none" stroke="#9c6c62" stroke-width="2"/>
+${i===1?'<path d="M41 80L55 113L70 80" fill="#f2f0e7"/>':''}
+</svg>`;
+}
+
+function renderActors(){
+$("actors").innerHTML="";
+levels[levelIndex].actors.forEach((name,i)=>{
+let b=document.createElement("button");
+b.className="actor";
+b.setAttribute("aria-label","與"+name+"對話");
+b.innerHTML=personSVG(i)+"<span>"+name+"</span>";
+b.onclick=()=>talk(i);
+$("actors").appendChild(b);
+});
+}
+
+function showDialogue(name,text,options){
+$("speaker").textContent=name;
+$("dialogueText").textContent=text;
+$("choices").innerHTML="";
+options.forEach(([label,callback])=>{
+let b=document.createElement("button");
+b.className="choice";
+b.textContent=label;
+b.onclick=callback;
+$("choices").appendChild(b);
+});
+$("dialogue").classList.remove("hidden");
+}
+
+function closeDialogue(){
+$("dialogue").classList.add("hidden");
+}
+
+function addScore(amount){
+levelScore=Math.max(0,Math.min(100,levelScore+amount));
+updateHUD();
+}
+
+function talk(i){
+if(phase!=="playing")return;
+let L=levels[levelIndex];
+let options=L.choices[i].map((item,j)=>[
+item[0],
+()=>{
+let id="actor"+i;
+if(!decisions.has(id)){
+decisions.add(id);
+addScore(item[1]);
+if(j===0)clues.add(id);
+}
+log("decision",{actor:L.actors[i],choice:item[0],points:item[1]});
+updateHUD();
+showDialogue(L.actors[i],item[2],[
+["繼續處理",()=>{
+closeDialogue();
+updateObjective();
+}]
+]);
+}
+]);
+showDialogue(L.actors[i],L.intro[i],options);
+log("npc_interaction",L.actors[i]);
+}
+
+function inspect(i){
+if(phase!=="playing")return;
+let L=levels[levelIndex];
+let obj=L.objects[i];
+showDialogue(obj[0],obj[1],[
+["依照建議完成調查",()=>{
+let id="object"+i;
+if(!decisions.has(id)){
+decisions.add(id);
+addScore(10);
+clues.add(id);
+}
+log("investigation",obj[0]);
+updateHUD();
+closeDialogue();
+updateObjective();
+}],
+["先返回場景",closeDialogue]
+]);
+}
+
+function updateObjective(){
+let count=decisions.size;
+if(count<3){
+$("objective").textContent="繼續與人物互動並調查線索";
+}else{
+$("objective").textContent="確認處置完成後，進入關卡結算";
+}
+if(decisions.size>=3){
+notify("已完成基本調查，可進行關卡結算");
+}
+renderFinishButton();
+}
+
+function renderFinishButton(){
+let old=$("finishButton");
+if(old)old.remove();
+if(decisions.size<3)return;
+let b=document.createElement("button");
+b.id="finishButton";
+b.className="goldbtn";
+b.textContent="完成本關處置 →";
+b.style.cssText="position:absolute;z-index:8;bottom:110px;right:12px";
+b.onclick=finishLevel;
+$("app").appendChild(b);
+}
+
+function finishLevel(){
+if(phase!=="playing")return;
+phase="result";
+clearInterval(timerHandle);
+closeDialogue();
+closeAI();
+let old=$("finishButton");
+if(old)old.remove();
+
+let duration=Math.floor((Date.now()-startTime)/1000);
+let bonus=decisions.size===5?10:0;
+levelScore=Math.min(100,levelScore+bonus);
+totalScore+=levelScore;
+updateHUD();
+
+let feedback=
+levelScore>=80
+?"你能有效蒐集資訊、協調相關人員，並兼顧旅客需求。"
+:levelScore>=50
+?"你完成了部分必要處置，但在溝通、資訊查證或團體管理方面仍有改善空間。"
+:"建議重新檢視應變流程，避免在資訊不足時做出重大決定。";
+
+$("resultTitle").textContent="第 "+(levelIndex+1)+" 關完成｜"+levels[levelIndex].title;
+$("resultScore").textContent=levelScore+" / 100";
+$("resultFeedback").textContent=feedback;
+$("resultDetail").textContent=
+"完成時間："+duration+" 秒\n"+
+"已處理互動："+decisions.size+" 項\n"+
+"取得線索："+clues.size+" 項\n"+
+"AI 導師提問："+history.filter(x=>x.role==="user").length+" 次\n"+
+"累計分數："+totalScore+" 分";
+
+$("resultDetail").style.whiteSpace="pre-line";
+$("nextBtn").textContent=levelIndex===2?"查看最終成果 →":"下一關 →";
+log("level_finish",{score:levelScore,duration,feedback});
+$("result").classList.remove("hidden");
+}
+
+function nextLevel(){
+$("result").classList.add("hidden");
+if(levelIndex<2){
+levelIndex++;
+showBriefing();
+}else{
+showFinal();
+}
+}
+
+function showFinal(){
+phase="finished";
+$("result").classList.remove("hidden");
+$("resultTitle").textContent="三關挑戰完成";
+$("resultScore").textContent=totalScore+" / 300";
+$("resultFeedback").textContent=
+"你已完成護照遺失、團員走散及航班取消三種情境。"+
+"這些結果可作為後續學習討論與研究原型測試資料。";
+$("resultDetail").textContent=
+"遊戲已完成。\n"+
+"本版評分屬教學原型，尚未經過信效度驗證。\n"+
+"真正的生成式 AI 導師仍待後續串接。";
+$("nextBtn").classList.add("hidden");
+log("game_finish",{totalScore});
+}
+
+function restart(){
+location.reload();
+}
+
+function openAI(){
+if(phase!=="playing"){
+notify("請先進入遊戲關卡");
+return;
+}
+$("aiPanel").classList.remove("hidden");
+if(!history.length){
+addMessage("bot",levels[levelIndex].ai.first);
+}
+}
+
+function closeAI(){
+$("aiPanel").classList.add("hidden");
+}
+
+function addMessage(role,text){
+history.push({role,text});
+let div=document.createElement("div");
+div.className="msg "+role;
+div.textContent=text;
+$("aiMessages").appendChild(div);
+$("aiMessages").scrollTop=$("aiMessages").scrollHeight;
+}
+
+function askAI(question){
+question=(question||"").trim();
+if(!question)return;
+
+let L=levels[levelIndex];
+addMessage("user",question);
+$("aiInput").value="";
+
+let q=question.toLowerCase();
+let answer;
+
+if(/安撫|情緒|緊張|害怕|生氣|抱怨/.test(q)){
+answer=L.ai.calm;
+}else if(/團員|團體|其他人|行程|集合|安排/.test(q)){
+answer=L.ai.group;
+}else if(/怎麼|如何|先做|下一步|處理|建議|方法/.test(q)){
+answer=L.ai.action;
+}else if(/找到|確認|知道|線索|資訊/.test(q)){
+answer="目前你已完成 "+decisions.size+" 項互動。"+
+"請想想：哪些資訊已確認？哪些只是推測？"+
+"還可以向哪位角色取得更多資料？";
+}else{
+answer="我想先了解你的判斷。"+
+"你現在最擔心的風險是什麼？"+
+"你會先確認哪一項資訊？"+
+"你也可以問我『下一步怎麼做』或『如何安撫旅客』。";
+}
+
+addMessage("bot",answer);
+log("ai_question",{question,answer,mode:"offline_rule_based"});
+}
+
+$("aiInput").addEventListener("keydown",e=>{
+if(e.key==="Enter")askAI($("aiInput").value);
+});
+
+function openHelp(){
+notify("點擊人物對話、調查標記蒐集線索，右下角可詢問導師。");
+}
+
+function exportLog(){
+let data={
+title:"TRAVEL AI 學習紀錄",
+version:"2.1",
+mentorMode:"offline_rule_based",
+totalScore,
+events:logs
+};
+let blob=new Blob([JSON.stringify(data,null,2)],{
+type:"application/json"
+});
+let url=URL.createObjectURL(blob);
+let a=document.createElement("a");
+a.href=url;
+a.download="travel-ai-learning-log.json";
+document.body.appendChild(a);
+a.click();
+a.remove();
+setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+
+/* 原創環境音樂：Web Audio API */
+let audioCtx=null;
+let musicOn=false;
+let musicTimer=null;
+let activeNodes=[];
+let noteIndex=0;
+
+const melody=[
+[261.63,329.63,392],
+[293.66,349.23,440],
+[246.94,329.63,392],
+[220,293.66,349.23],
+[261.63,329.63,440],
+[293.66,392,493.88],
+[246.94,293.66,392],
+[220,261.63,329.63]
+];
+
+function playChord(){
+if(!audioCtx||!musicOn)return;
+let notes=melody[noteIndex%melody.length];
+noteIndex++;
+let now=audioCtx.currentTime;
+
+notes.forEach((freq,i)=>{
+let osc=audioCtx.createOscillator();
+let gain=audioCtx.createGain();
+osc.type="sine";
+osc.frequency.value=freq;
+gain.gain.setValueAtTime(0.0001,now);
+gain.gain.exponentialRampToValueAtTime(0.018/(i+1),now+.8);
+gain.gain.exponentialRampToValueAtTime(0.0001,now+3.8);
+osc.connect(gain);
+gain.connect(audioCtx.destination);
+osc.start(now);
+osc.stop(now+4);
+activeNodes.push(osc);
+osc.onended=()=>{
+activeNodes=activeNodes.filter(x=>x!==osc);
+};
+});
+}
+
+function startMusic(){
+if(musicOn)return;
+try{
+audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();
+audioCtx.resume();
+musicOn=true;
+playChord();
+musicTimer=setInterval(playChord,3300);
+$("musicBtn").textContent="♫ 音樂：開";
+$("introMusic").textContent="♫ 關閉背景音樂";
+}catch(e){
+musicOn=false;
+notify("目前瀏覽器無法播放背景音樂");
+}
+}
+
+function stopMusic(){
+musicOn=false;
+clearInterval(musicTimer);
+musicTimer=null;
+activeNodes.forEach(n=>{
+try{n.stop()}catch(e){}
+});
+activeNodes=[];
+$("musicBtn").textContent="♫ 音樂：關";
+$("introMusic").textContent="♫ 開啟背景音樂";
+}
+
+function toggleMusic(){
+if(musicOn)stopMusic();
+else startMusic();
+}
+
+renderScene();
 </script>
 </body>
 </html>
