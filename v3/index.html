@@ -1,0 +1,353 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI智慧領隊 V3</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#081524;color:#eef5ff;font-family:Arial,"Microsoft JhengHei",sans-serif}
+header{background:#102740;padding:20px;text-align:center;border-bottom:2px solid #36d5bd}
+h1{margin:5px;font-size:26px}
+h2{font-size:21px}
+p{line-height:1.7}
+small,.muted{color:#a7bbce}
+main{max-width:850px;margin:auto;padding:16px}
+.panel{background:#132b44;border:1px solid #31516c;border-radius:16px;padding:18px;margin:14px 0}
+button{background:#2bd0b8;color:#05212a;border:0;border-radius:10px;padding:13px 16px;font-size:15px;font-weight:bold;cursor:pointer;margin:5px 5px 5px 0}
+button:disabled{opacity:.4}
+.secondary{background:#28445e;color:white}
+.danger{background:#ffb36b;color:#251306}
+input{width:100%;padding:14px;border-radius:10px;border:1px solid #66809b;background:#091c30;color:white;font-size:16px}
+.hidden{display:none}
+.log{background:#081a2c;border-radius:10px;padding:12px;min-height:80px;max-height:300px;overflow:auto}
+.msg{padding:10px;margin:8px 0;border-left:3px solid #36d5bd;background:#18334d;border-radius:5px;line-height:1.6}
+.user{border-color:#ffce7a}
+.tag{display:inline-block;padding:7px 10px;background:#294761;border-radius:20px;margin:4px;font-size:13px}
+.progress{height:12px;background:#31465b;border-radius:10px;overflow:hidden}
+.fill{height:100%;background:#2bd0b8;width:0%;transition:.3s}
+#score{color:#ffdc87;font-weight:bold}
+</style>
+</head>
+<body>
+<header>
+<h1>🌏 AI 智慧領隊</h1>
+<div>旅遊緊急事故處理模擬系統 V3</div>
+<small>GAI 導師融入數位遊戲之協作學習模式設計</small>
+</header>
+
+<main>
+<section id="home" class="panel">
+<h2>歡迎進入領隊危機訓練</h2>
+<p>你是一名帶領旅行團的領隊。旅途中可能發生各種緊急事故，你必須詢問相關人員、蒐集資訊並做出處置決策。</p>
+<p>TRAVEL AI 將擔任你的數位副領隊，提供提示，但不會直接替你完成任務。</p>
+<h3>選擇關卡</h3>
+<button onclick="start(0)">🛂 第一關：護照遺失</button>
+<button onclick="start(1)">🧭 第二關：團員走散</button>
+<button onclick="start(2)">✈️ 第三關：航班取消</button>
+</section>
+
+<section id="game" class="hidden">
+<div class="panel">
+<div class="muted" id="levelLabel"></div>
+<h2 id="title"></h2>
+<p id="story"></p>
+<div class="progress"><div class="fill" id="bar"></div></div>
+<p>目前分數：<span id="score">0</span> / 100</p>
+</div>
+
+<div class="panel">
+<h2>🔎 第一步：調查現場</h2>
+<p>選擇你要詢問的對象，再輸入想了解的問題。</p>
+<div id="npcButtons"></div>
+<p id="targetLabel" class="muted">尚未選擇詢問對象</p>
+<input id="question" placeholder="例如：你最後一次看到護照在哪裡？">
+<button onclick="ask()">送出問題</button>
+<div class="log" id="dialog"></div>
+</div>
+
+<div class="panel">
+<h2>📋 已掌握的線索</h2>
+<div id="clues" class="muted">目前尚未蒐集線索。</div>
+</div>
+
+<div class="panel">
+<h2>🤖 TRAVEL AI 數位副領隊</h2>
+<p>遇到困難時，可以詢問 AI 如何判斷下一步。</p>
+<input id="aiQuestion" placeholder="例如：我應該先處理什麼？">
+<button onclick="askAI()">詢問 TRAVEL AI</button>
+<div class="log" id="aiLog"></div>
+</div>
+
+<div class="panel">
+<h2>⚖️ 第二步：危機處置</h2>
+<p>依照已掌握的資訊，決定你要採取的行動。</p>
+<div id="actions"></div>
+<div class="log" id="actionLog"></div>
+<button class="danger" onclick="finish()">完成本關並查看評估</button>
+</div>
+</section>
+
+<section id="result" class="panel hidden">
+<h2>📊 任務評估報告</h2>
+<div id="resultText"></div>
+<button onclick="nextLevel()">下一關</button>
+<button class="secondary" onclick="home()">返回關卡選單</button>
+<button class="secondary" onclick="downloadReport()">匯出學習紀錄</button>
+</section>
+</main>
+
+<script>
+const levels=[
+{
+title:"護照遺失",
+story:"旅行團即將前往機場，一名團員突然表示找不到護照。距離集合出發只剩兩小時，其他團員開始焦慮。身為領隊，你會如何處理？",
+npcs:[
+{name:"遺失護照的團員",keywords:["最後","哪裡","看到","護照","時間","找"],reply:"我最後一次確定看到護照，是昨天在飯店辦理入住時。今天整理行李才發現不見了。",clue:"護照最後出現於飯店入住時"},
+{name:"飯店櫃檯",keywords:["護照","櫃檯","遺失","找到","房間","保管"],reply:"我們可以協助查詢櫃檯遺留物、失物招領紀錄，並聯絡房務確認房內是否有護照。",clue:"飯店可協助查找失物與房間"},
+{name:"當地接待人員",keywords:["證件","報案","辦事處","協助","補發","程序"],reply:"如果確認護照遺失，需要查明所在地的報案及旅行證件申辦程序，並協助聯繫相關單位。",clue:"可能需要報案及申辦緊急旅行證件"}
+],
+actions:[
+["確認團員身分及最後持有護照的地點",20],
+["請飯店協助查找並確認是否確實遺失",20],
+["聯絡相關駐外單位確認旅行證件申辦方式",20],
+["未確認證件狀態就要求團員自行前往機場",-15],
+["向團員說明安排並協調其他團員行程",15]
+],
+hint:"先確認護照是否真的遺失，再查明當地適用的報案、證件申辦及交通安排。"
+},
+{
+title:"團員走散",
+story:"旅行團在熱門觀光景點自由活動後集合，發現一名團員沒有回來。電話暫時無法接通，集合地點人潮眾多，其他團員正在等待。",
+npcs:[
+{name:"同行團員",keywords:["最後","看到","同行","走散","位置","時間"],reply:"我最後看到他是在景點入口附近，他說想去旁邊的商店看看。",clue:"失聯團員最後出現在景點入口商店附近"},
+{name:"景點工作人員",keywords:["廣播","監視","尋人","服務台","協尋"],reply:"服務台可以協助通報現場人員，並依景點規定啟動協尋流程。",clue:"景點服務台可以協助現場協尋"},
+{name:"當地接待人員",keywords:["警察","安全","通報","協助","搜尋"],reply:"我們可以安排人員協尋，若涉及安全疑慮或持續失聯，應依情況聯繫當地警方。",clue:"可協調協尋並視風險聯繫警方"}
+],
+actions:[
+["確認失聯者最後位置、時間及外觀特徵",20],
+["安排團員留在安全集合點並清點人數",20],
+["請景點服務台及當地接待人員協尋",20],
+["讓所有團員自行分散尋找",-20],
+["評估安全風險並視情況聯絡警方",15]
+],
+hint:"先確認失聯者資訊，同時維持其他團員安全與集合秩序，再進行有組織的協尋。"
+},
+{
+title:"航班取消",
+story:"旅行團抵達機場後，航空公司宣布原定返程航班取消。部分團員需要隔天上班，另有團員擔心住宿及額外費用。",
+npcs:[
+{name:"航空公司櫃檯",keywords:["改票","改航班","取消","原因","退票","安排"],reply:"本班機已取消，旅客需要確認可改搭的航班、退改票條件，以及航空公司提供的協助。",clue:"需確認航空公司替代航班與退改票條件"},
+{name:"焦慮的團員",keywords:["需求","工作","住宿","時間","擔心"],reply:"我明天早上必須回去上班，希望你先告訴我最快可以搭哪一班飛機。",clue:"部分團員有急迫返程需求"},
+{name:"當地接待人員",keywords:["飯店","住宿","交通","餐食","接駁"],reply:"我們可以協助確認附近住宿、機場接送及餐食安排，但費用負擔需要依實際規定確認。",clue:"可協調住宿交通，但須確認費用責任"}
+],
+actions:[
+["向航空公司確認取消原因與替代方案",20],
+["統計團員特殊需求及優先返程情況",20],
+["協調住宿、交通與餐食安排",20],
+["直接承諾所有額外費用由航空公司支付",-20],
+["向團員說明最新資訊並持續更新安排",15]
+],
+hint:"優先確認航空公司實際提供的選項，再評估團員需求、住宿交通與費用責任。"
+}
+];
+
+let current=0,score=0,target=-1;
+let clues=[],done=[],records=[];
+let askedCount=0,aiCount=0;
+const $=id=>document.getElementById(id);
+
+function show(id){
+["home","game","result"].forEach(x=>$(x).classList.add("hidden"));
+$(id).classList.remove("hidden");
+window.scrollTo(0,0);
+}
+
+function start(i){
+current=i;score=0;target=-1;
+clues=[];done=[];askedCount=0;aiCount=0;
+let l=levels[i];
+$("levelLabel").textContent="第 "+(i+1)+" 關 / 3";
+$("title").textContent=l.title;
+$("story").textContent=l.story;
+$("dialog").innerHTML="";
+$("aiLog").innerHTML="";
+$("actionLog").innerHTML="";
+$("question").value="";
+$("aiQuestion").value="";
+$("targetLabel").textContent="尚未選擇詢問對象";
+$("npcButtons").innerHTML="";
+$("actions").innerHTML="";
+
+l.npcs.forEach((n,j)=>{
+let b=document.createElement("button");
+b.className="secondary";
+b.textContent="👤 "+n.name;
+b.onclick=()=>{
+target=j;
+$("targetLabel").textContent="目前詢問："+n.name;
+};
+$("npcButtons").appendChild(b);
+});
+
+l.actions.forEach((a,j)=>{
+let b=document.createElement("button");
+b.className="secondary";
+b.textContent=a[0];
+b.onclick=()=>act(j,b);
+$("actions").appendChild(b);
+});
+
+update();
+show("game");
+}
+
+function addLog(id,who,message,isUser=false){
+let d=document.createElement("div");
+d.className="msg"+(isUser?" user":"");
+let strong=document.createElement("strong");
+strong.textContent=who+"：";
+let content=document.createElement("div");
+content.textContent=message;
+d.append(strong,content);
+$(id).appendChild(d);
+$(id).scrollTop=$(id).scrollHeight;
+}
+
+function ask(){
+let q=$("question").value.trim();
+if(target<0){alert("請先選擇詢問對象");return;}
+if(!q){alert("請先輸入問題");return;}
+let n=levels[current].npcs[target];
+askedCount++;
+addLog("dialog","你 → "+n.name,q,true);
+
+let matched=n.keywords.some(k=>q.includes(k));
+if(matched){
+addLog("dialog",n.name,n.reply);
+if(!clues.includes(n.clue)){
+clues.push(n.clue);
+score=Math.min(100,score+8);
+}
+}else{
+addLog("dialog",n.name,"可以請你再問得具體一點嗎？例如詢問時間、位置、相關程序或可提供的協助。");
+}
+$("question").value="";
+update();
+}
+
+function askAI(){
+let q=$("aiQuestion").value.trim();
+if(!q){alert("請輸入你想詢問的問題");return;}
+aiCount++;
+addLog("aiLog","你",q,true);
+let reply="";
+if(/下一步|先|怎麼|如何|建議|處理/.test(q)){
+reply=levels[current].hint;
+}else if(/線索|資訊|知道|缺少/.test(q)){
+reply="目前你已取得 "+clues.length+" 項線索。請確認不同相關人員的說法，再決定處置順序。";
+}else if(/分數|評分/.test(q)){
+reply="評分會考慮資訊蒐集及處置決策。請避免未經確認就做出承諾。";
+}else{
+reply="我建議先釐清事件事實、確認團員安全與需求，再判斷需要聯絡哪些單位。你認為目前最缺少哪一項資訊？";
+}
+addLog("aiLog","TRAVEL AI",reply);
+$("aiQuestion").value="";
+}
+
+function act(j,button){
+if(done.includes(j))return;
+done.push(j);
+button.disabled=true;
+let a=levels[current].actions[j];
+score=Math.max(0,Math.min(100,score+a[1]));
+let response=a[1]>0
+?"這項處置有助於控制事件風險。"
+:"此決策可能增加風險，請重新思考。";
+addLog("actionLog","系統回饋",response);
+update();
+}
+
+function update(){
+$("score").textContent=score;
+$("bar").style.width=score+"%";
+$("clues").innerHTML="";
+if(clues.length===0){
+$("clues").textContent="目前尚未蒐集線索。";
+}else{
+clues.forEach(c=>{
+let d=document.createElement("span");
+d.className="tag";
+d.textContent="✓ "+c;
+$("clues").appendChild(d);
+});
+}
+}
+
+function finish(){
+if(done.length===0){
+alert("請先執行至少一項危機處置。");
+return;
+}
+let level=levels[current];
+let comment=score>=80?"處置表現良好，能掌握主要危機處理方向。":
+score>=50?"已掌握部分處理程序，但仍有需要改善的地方。":
+"建議重新檢視資訊蒐集與危機處置順序。";
+
+let record={
+關卡:level.title,
+分數:score,
+提問次數:askedCount,
+AI提問次數:aiCount,
+蒐集線索:clues.slice(),
+執行處置:done.map(i=>level.actions[i][0]),
+評語:comment
+};
+records.push(record);
+
+$("resultText").innerHTML="";
+let lines=[
+"關卡："+level.title,
+"本關得分："+score+" / 100",
+"NPC 提問次數："+askedCount,
+"AI 提問次數："+aiCount,
+"取得線索："+clues.length+" / 3",
+"執行處置："+done.length+" / 5",
+"學習回饋："+comment
+];
+lines.forEach(t=>{
+let p=document.createElement("p");
+p.textContent=t;
+$("resultText").appendChild(p);
+});
+show("result");
+}
+
+function nextLevel(){
+if(current<2)start(current+1);
+else home();
+}
+
+function home(){show("home");}
+
+function downloadReport(){
+let text="AI智慧領隊 V3 學習紀錄\n\n";
+records.forEach((r,i)=>{
+text+="第 "+(i+1)+" 筆\n";
+Object.entries(r).forEach(([k,v])=>{
+text+=k+"："+(Array.isArray(v)?v.join("、"):v)+"\n";
+});
+text+="\n";
+});
+let blob=new Blob([text],{type:"text/plain;charset=utf-8"});
+let url=URL.createObjectURL(blob);
+let a=document.createElement("a");
+a.href=url;
+a.download="AI智慧領隊_學習紀錄.txt";
+a.click();
+setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+</script>
+</body>
+</html>
