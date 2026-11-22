@@ -4,32 +4,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>TRAVEL AI V3.0｜智慧領隊危機應變</title>
+<title>TRAVEL AI｜智慧領隊危機應變</title>
 <style>
 :root{
---gold:#e4c48d;--bg:#08131e;--panel:#112336;
---text:#f6f2e9;--muted:#b7c6d3;--line:#ffffff25;
+  --gold:#e4c48d;--bg:#08131e;--panel:#112336;
+  --text:#f6f2e9;--muted:#b7c6d3;--line:#ffffff25;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,"Noto Sans TC",sans-serif}
 button,input{font:inherit}
 button{cursor:pointer}
 button:disabled{opacity:.45;cursor:not-allowed}
-.hidden{display:none!important}
+button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 #app{position:relative;min-height:100dvh;overflow:hidden;background:#101e2c}
+.hidden{display:none!important}
 .scene{position:absolute;inset:0;overflow:hidden}
 .scene svg{width:100%;height:100%;object-fit:cover}
-.tint{position:absolute;inset:0;background:linear-gradient(180deg,#07121dbb,transparent 35%,#07121de8);pointer-events:none}
-.top{position:relative;z-index:3;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:15px}
+.tint{position:absolute;inset:0;background:linear-gradient(180deg,#07121dbb 0%,transparent 32%,transparent 57%,#07121de8 100%);pointer-events:none}
+.top{position:relative;z-index:3;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:16px 18px}
 .brand{font-size:19px;font-weight:900;letter-spacing:3px;color:var(--gold)}
 .sub{font-size:10px;letter-spacing:2px;color:#c3d0da}
-.actions{display:flex;gap:7px}
-.chip{border:1px solid #ffffff50;background:#0b192bc9;color:white;border-radius:30px;padding:9px 12px;font-size:12px}
-.hud{position:relative;z-index:3;display:flex;gap:8px;padding:0 14px;flex-wrap:wrap}
+.actions{display:flex;gap:7px;align-items:center}
+.chip{border:1px solid #ffffff50;background:#0b192bc9;color:#fff;border-radius:30px;padding:9px 12px;font-size:12px}
+.hud{position:relative;z-index:3;display:flex;gap:8px;padding:0 16px;flex-wrap:wrap}
 .stat{background:#0b192bc9;border:1px solid var(--line);padding:9px 12px;border-radius:12px;font-size:12px}
 .stat strong{color:var(--gold);font-size:17px}
 .actors{position:absolute;z-index:4;inset:0;pointer-events:none}
-.actor{position:absolute;bottom:22%;width:110px;height:220px;border:0;background:none;pointer-events:auto;filter:drop-shadow(0 15px 14px #0008)}
+.actor{position:absolute;bottom:22%;width:110px;height:220px;border:0;background:none;pointer-events:auto;transition:transform .2s;filter:drop-shadow(0 15px 14px #0008)}
+.actor:hover{transform:translateY(-5px)}
 .actor svg{width:100%;height:100%}
 .actor span{position:absolute;bottom:-17px;left:50%;transform:translateX(-50%);white-space:nowrap;border:1px solid var(--gold);background:#102136ed;color:#fff0d2;padding:7px 12px;border-radius:25px;font-size:12px}
 .actor:nth-child(1){left:13%}
@@ -43,10 +45,10 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .task b{color:var(--gold)}
 .task p{font-size:12px;margin:5px 0 0;color:#cbd6e0}
 .goldbtn{border:0;background:var(--gold);color:#142236;font-weight:800;padding:13px 20px;border-radius:10px}
-.outlinebtn{border:1px solid #d7b98599;background:#182b40;color:white;padding:12px 17px;border-radius:10px}
-#aiButton{pointer-events:auto;border-radius:40px}
+.outlinebtn{border:1px solid #d7b98599;background:#182b40;color:#fff;padding:12px 17px;border-radius:10px}
+#aiButton{pointer-events:auto;box-shadow:0 5px 25px #0007;border-radius:40px}
 .overlay{position:absolute;z-index:20;inset:0;background:#07111de9;display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto}
-.introbox{width:min(640px,100%);max-height:94dvh;overflow:auto;background:linear-gradient(145deg,#162c42,#0c1929);border:1px solid #e4c48d77;border-radius:22px;padding:28px;box-shadow:0 25px 80px #0009}
+.introbox{width:min(640px,100%);max-height:94dvh;overflow:auto;background:linear-gradient(145deg,#162c42,#0c1929);border:1px solid #e4c48d77;border-radius:22px;padding:30px;box-shadow:0 25px 80px #0009}
 .eyebrow{color:var(--gold);letter-spacing:3px;font-size:12px;font-weight:800}
 h1{font-size:clamp(34px,7vw,58px);line-height:1.15;margin:13px 0}
 h2{font-size:26px;color:var(--gold);margin:10px 0}
@@ -55,22 +57,22 @@ p{line-height:1.75;color:#d5e0e8}
 .role b{color:var(--gold)}
 .role div{line-height:1.8;margin-top:5px;font-size:14px}
 .introActions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
-.modal{position:absolute;z-index:15;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,calc(100% - 24px));max-height:85dvh;overflow:auto;background:#102237f8;border:1px solid #e4c48d88;border-radius:18px;padding:20px;box-shadow:0 25px 90px #000b}
+.modal{position:absolute;z-index:15;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,calc(100% - 24px));max-height:85dvh;overflow:auto;background:#102237f8;border:1px solid #e4c48d88;border-radius:18px;padding:22px;box-shadow:0 25px 90px #000b}
 .modalHead{display:flex;justify-content:space-between;align-items:center;color:var(--gold);font-weight:900}
 .x{border:0;background:none;color:white;font-size:25px}
 .choices{display:grid;gap:9px;margin-top:14px}
 .choice{border:1px solid #ffffff35;border-radius:10px;background:#20364b;color:white;padding:13px;text-align:left;line-height:1.5}
+.choice:hover{border-color:var(--gold)}
 #dialogueText,#aiMessages{white-space:pre-wrap;line-height:1.8;margin:17px 0}
 #aiMessages{max-height:36dvh;overflow:auto;display:grid;gap:10px}
-.msg{padding:12px;border-radius:12px;font-size:14px;line-height:1.7;overflow-wrap:anywhere}
+.msg{padding:12px;border-radius:12px;font-size:14px;line-height:1.7}
 .msg.user{background:#344c61;margin-left:16%}
 .msg.bot{background:#1b3545;margin-right:12%;border-left:2px solid var(--gold)}
-.msg.error{background:#4c2930;border-left:2px solid #ff9c9c}
 #aiInput{width:100%;padding:13px;border-radius:10px;border:1px solid #ffffff55;background:#071522;color:white;margin:10px 0}
 .note{font-size:11px;color:#afc1d1}
-#aiStatus{font-size:12px;margin-top:8px;color:#d9c48f}
 #toast{position:absolute;z-index:30;top:92px;left:50%;transform:translateX(-50%);max-width:90%;background:#183148;border:1px solid var(--gold);padding:12px 17px;border-radius:12px;display:none;text-align:center}
 #resultScore{font-size:52px;color:var(--gold);font-weight:900}
+#progress{font-size:13px;color:#d4dce3;margin-top:12px}
 @media(max-width:600px){
 .top{padding:11px}.brand{font-size:15px}.sub{font-size:9px}
 .chip{padding:8px;font-size:11px}.hud{padding:0 10px}
@@ -79,10 +81,8 @@ p{line-height:1.75;color:#d5e0e8}
 .actor:nth-child(1){left:4%}
 .actor:nth-child(2){left:39%;bottom:31%}
 .actor:nth-child(3){right:1%}
-#obj1{left:28%;bottom:24%}
-#obj2{right:29%;top:40%}
-.bottom{left:8px;right:8px}
-.task{max-width:65%;font-size:12px}
+#obj1{left:28%;bottom:24%}#obj2{right:29%;top:40%}
+.bottom{left:8px;right:8px}.task{max-width:65%;font-size:12px}
 #aiButton{padding:12px;font-size:12px}
 .introbox{padding:22px}
 }
@@ -90,13 +90,14 @@ p{line-height:1.75;color:#d5e0e8}
 </head>
 <body>
 <div id="app">
+
 <div class="scene" id="scene"></div>
 <div class="tint"></div>
 
 <header class="top">
 <div>
 <div class="brand">TRAVEL AI</div>
-<div class="sub">智慧領隊危機應變模擬 · V3.0</div>
+<div class="sub">智慧領隊危機應變模擬</div>
 </div>
 <div class="actions">
 <button class="chip" id="musicBtn" onclick="toggleMusic()">♫ 音樂：關</button>
@@ -107,13 +108,13 @@ p{line-height:1.75;color:#d5e0e8}
 <div class="hud">
 <div class="stat">關卡 <strong id="levelNum">1 / 3</strong></div>
 <div class="stat">應變分數 <strong id="score">0</strong></div>
-<div class="stat">線索 <strong id="clueCount">0 / 5</strong></div>
+<div class="stat">線索 <strong id="clueCount">0 / 3</strong></div>
 <div class="stat">時間 <strong id="timer">00:00</strong></div>
 </div>
 
 <div class="actors" id="actors"></div>
-<button id="obj1" class="object" onclick="inspect(0)">⌕</button>
-<button id="obj2" class="object" onclick="inspect(1)">⌕</button>
+<button id="obj1" class="object" onclick="inspect(0)" aria-label="調查線索一">⌕</button>
+<button id="obj2" class="object" onclick="inspect(1)" aria-label="調查線索二">⌕</button>
 
 <div class="bottom">
 <div class="task">
@@ -128,20 +129,22 @@ p{line-height:1.75;color:#d5e0e8}
 <div class="introbox">
 <div class="eyebrow">INTERACTIVE LEARNING EXPERIENCE</div>
 <h1>TRAVEL AI<br><span style="color:var(--gold)">智慧領隊</span></h1>
-<p>一場旅行，三次突發事故。你的每個決定，都可能影響旅客安全、信任與行程。</p>
+<p>一場旅行，三次突發事故。你做出的每個決定，都可能影響旅客的安全、信任與行程。</p>
 <div class="role">
 <b>你的角色｜海外旅行團領隊</b>
-<div>你負責帶領 15 位旅客出國旅遊。除了行程安排，還需要處理突發事件、協調各方資源、安撫旅客情緒，並維護團體安全。</div>
+<div>
+你負責帶領 15 位旅客出國旅遊。除了行程安排，你還需要處理突發事件、協調各方資源、安撫旅客情緒，並維護團體安全。
+</div>
 </div>
 <div class="role">
-<b>三大任務</b>
+<b>你的任務</b>
 <div>
 第一關：東京飯店｜護照遺失<br>
 第二關：曼谷市集｜團員走散<br>
 第三關：仁川機場｜航班取消
 </div>
 </div>
-<p class="note">本遊戲為研究原型。AI 導師會嘗試連線 Gemini 生成式 AI，實際可用性依後端服務狀態而定。</p>
+<p class="note">這是研究用遊戲原型。AI 導師目前採免費離線引導，尚未連接生成式 AI 模型。</p>
 <div class="introActions">
 <button class="goldbtn" onclick="begin()">接受任務，開始遊戲 →</button>
 <button class="outlinebtn" onclick="toggleMusic()" id="introMusic">♫ 開啟背景音樂</button>
@@ -151,10 +154,13 @@ p{line-height:1.75;color:#d5e0e8}
 
 <div id="briefing" class="overlay hidden">
 <div class="introbox">
-<div class="eyebrow" id="briefTag"></div>
-<h1 id="briefTitle"></h1>
+<div class="eyebrow" id="briefTag">CHAPTER 01</div>
+<h1 id="briefTitle">消失的護照</h1>
 <p id="briefDesc"></p>
-<div class="role"><b>本關學習目標</b><div id="briefGoal"></div></div>
+<div class="role">
+<b>本關學習目標</b>
+<div id="briefGoal"></div>
+</div>
 <button class="goldbtn" onclick="enterLevel()">進入情境 →</button>
 </div>
 </div>
@@ -170,18 +176,17 @@ p{line-height:1.75;color:#d5e0e8}
 
 <div id="aiPanel" class="modal hidden">
 <div class="modalHead">
-<span>✦ TRAVEL AI｜Gemini 提問式導師</span>
+<span>✦ TRAVEL AI｜提問式導師</span>
 <button class="x" onclick="closeAI()">×</button>
 </div>
-<p class="note">你可以自由提問。AI 導師會依照目前關卡與你的處置紀錄提供引導，不保證每次回答完全正確。</p>
-<div id="aiStatus">● 尚未測試 AI 連線</div>
+<p class="note">離線教學原型：可自由提問及連續對話，但不是真正的生成式 AI。</p>
 <div id="aiMessages"></div>
 <div class="choices">
 <button class="choice" onclick="askAI('我現在應該先做什麼？')">我現在應該先做什麼？</button>
 <button class="choice" onclick="askAI('我要怎麼安撫旅客？')">我要怎麼安撫旅客？</button>
 </div>
-<input id="aiInput" maxlength="1000" placeholder="自由輸入你的問題">
-<button class="goldbtn" id="askBtn" onclick="askAI(document.getElementById('aiInput').value)">送出提問</button>
+<input id="aiInput" placeholder="自由輸入你的問題">
+<button class="goldbtn" onclick="askAI(document.getElementById('aiInput').value)">送出提問</button>
 </div>
 
 <div id="result" class="overlay hidden">
@@ -192,7 +197,7 @@ p{line-height:1.75;color:#d5e0e8}
 <p id="resultFeedback"></p>
 <div class="role">
 <b>學習紀錄</b>
-<div id="resultDetail" style="white-space:pre-line"></div>
+<div id="resultDetail"></div>
 </div>
 <div class="introActions">
 <button class="goldbtn" id="nextBtn" onclick="nextLevel()">下一關 →</button>
@@ -209,9 +214,6 @@ p{line-height:1.75;color:#d5e0e8}
 "use strict";
 
 const $=id=>document.getElementById(id);
-
-const WORKER_URL=
-"https://travel-ai-mentor.ss2359712404.workers.dev";
 
 const levels=[
 {
@@ -247,7 +249,12 @@ objects:[
 ["旅客隨身物品","徵得同意後，請旅客自行檢查背包、衣物及行李夾層。"],
 ["飯店交接紀錄","確認飯店是否能協助核對入住交接及失物招領紀錄。"]
 ],
-first:"旅客表示護照遺失。你認為目前最需要確認的資訊是什麼？"
+ai:{
+first:"你目前掌握哪些資訊？旅客最後一次使用護照是在什麼地方？",
+calm:"你可以先承認旅客的焦慮，說明你會協助調查。接著問自己：哪些資訊已確認？哪些仍只是推測？",
+group:"其他團員也需要被照顧。你會如何說明目前狀況，並與旅行社協調接下來的行程？",
+action:"先確認最後使用地點、請旅客檢查物品、向飯店查證，再依確認結果聯繫旅行社及查詢官方協助程序。"
+}
 },
 {
 city:"曼谷 · 泰國",
@@ -282,7 +289,12 @@ objects:[
 ["集合地點","確認集合點位置及辨識標誌，方便失聯者返回。"],
 ["聯絡紀錄","確認最後通話、訊息及可能的聯絡方式。"]
 ],
-first:"現在有團員失聯。你會先確認哪些資訊，同時如何確保其他團員安全？"
+ai:{
+first:"你目前知道失聯者最後出現在哪裡嗎？其他團員是否都在安全的集合點？",
+calm:"面對焦慮的團員，可以先說明正在確認的資訊與具體分工。你能避免哪些不必要的恐慌？",
+group:"請優先維持其餘團員的安全與集合秩序，不要讓所有人各自分散尋找。",
+action:"確認最後目擊資訊、建立安全集合點、分工聯繫、尋求現場協助，並視風險與情況聯絡當地相關單位。"
+}
 },
 {
 city:"仁川 · 韓國",
@@ -317,16 +329,25 @@ objects:[
 ["航班資訊看板","核對航班號碼與狀態，並以航空公司正式資訊為準。"],
 ["旅客需求清單","整理有醫療、住宿、工作時程等特殊需求的旅客。"]
 ],
-first:"航班取消後，你會先向航空公司確認哪些正式資訊？哪些事情還不能向旅客保證？"
+ai:{
+first:"你目前取得航空公司的正式通知了嗎？哪些安排已經確認，哪些還不能保證？",
+calm:"先向旅客說明目前確定的事實，再告訴他們下一次更新資訊的時間。你能避免哪些過度承諾？",
+group:"請整理團員的特殊需求，並與旅行社及航空公司協調替代安排。",
+action:"先取得正式航班資訊，再確認改票、住宿、交通及費用安排，並持續向旅客更新進度。"
+}
 }
 ];
 
-let levelIndex=0,totalScore=0,levelScore=0;
-let clues=new Set(),decisions=new Set();
-let logs=[],history=[],allConversations=[];
-let startTime=0,timerHandle=null;
-let phase="intro",aiBusy=false;
-let aiRequestId=0,mentorMode="not_tested";
+let levelIndex=0;
+let totalScore=0;
+let levelScore=0;
+let clues=new Set();
+let decisions=new Set();
+let logs=[];
+let history=[];
+let startTime=0;
+let timerHandle=null;
+let phase="intro";
 
 function log(type,data){
 logs.push({
@@ -340,15 +361,13 @@ function notify(message){
 $("toast").textContent=message;
 $("toast").style.display="block";
 clearTimeout(notify.handle);
-notify.handle=setTimeout(
-()=>$("toast").style.display="none",2700
-);
+notify.handle=setTimeout(()=>$("toast").style.display="none",2700);
 }
 
 function updateHUD(){
 $("levelNum").textContent=(levelIndex+1)+" / 3";
 $("score").textContent=levelScore;
-$("clueCount").textContent=clues.size+" / 5";
+$("clueCount").textContent=clues.size+" / 3";
 }
 
 function begin(){
@@ -373,16 +392,10 @@ $("briefing").classList.add("hidden");
 $("result").classList.add("hidden");
 $("dialogue").classList.add("hidden");
 $("aiPanel").classList.add("hidden");
-$("aiMessages").innerHTML="";
-$("nextBtn").classList.remove("hidden");
 levelScore=0;
 clues=new Set();
 decisions=new Set();
 history=[];
-aiRequestId++;
-aiBusy=false;
-$("askBtn").disabled=false;
-$("aiStatus").textContent="● 尚未測試 AI 連線";
 startTime=Date.now();
 clearInterval(timerHandle);
 timerHandle=setInterval(()=>{
@@ -557,11 +570,7 @@ decisions.add(id);
 addScore(item[1]);
 if(j===0)clues.add(id);
 }
-log("decision",{
-actor:L.actors[i],
-choice:item[0],
-points:item[1]
-});
+log("decision",{actor:L.actors[i],choice:item[0],points:item[1]});
 updateHUD();
 showDialogue(L.actors[i],item[2],[
 ["繼續處理",()=>{
@@ -597,10 +606,13 @@ updateObjective();
 }
 
 function updateObjective(){
-if(decisions.size<3){
+let count=decisions.size;
+if(count<3){
 $("objective").textContent="繼續與人物互動並調查線索";
 }else{
 $("objective").textContent="確認處置完成後，進入關卡結算";
+}
+if(decisions.size>=3){
 notify("已完成基本調查，可進行關卡結算");
 }
 renderFinishButton();
@@ -622,7 +634,6 @@ $("app").appendChild(b);
 function finishLevel(){
 if(phase!=="playing")return;
 phase="result";
-aiRequestId++;
 clearInterval(timerHandle);
 closeDialogue();
 closeAI();
@@ -652,6 +663,7 @@ $("resultDetail").textContent=
 "AI 導師提問："+history.filter(x=>x.role==="user").length+" 次\n"+
 "累計分數："+totalScore+" 分";
 
+$("resultDetail").style.whiteSpace="pre-line";
 $("nextBtn").textContent=levelIndex===2?"查看最終成果 →":"下一關 →";
 log("level_finish",{score:levelScore,duration,feedback});
 $("result").classList.remove("hidden");
@@ -673,20 +685,19 @@ $("result").classList.remove("hidden");
 $("resultTitle").textContent="三關挑戰完成";
 $("resultScore").textContent=totalScore+" / 300";
 $("resultFeedback").textContent=
-"你已完成護照遺失、團員走散及航班取消三種情境。";
+"你已完成護照遺失、團員走散及航班取消三種情境。"+
+"這些結果可作為後續學習討論與研究原型測試資料。";
 $("resultDetail").textContent=
 "遊戲已完成。\n"+
 "本版評分屬教學原型，尚未經過信效度驗證。\n"+
-"AI 導師連線狀態："+mentorMode;
+"真正的生成式 AI 導師仍待後續串接。";
 $("nextBtn").classList.add("hidden");
-log("game_finish",{totalScore,mentorMode});
+log("game_finish",{totalScore});
 }
 
 function restart(){
 location.reload();
 }
-
-/* Gemini AI 導師 */
 
 function openAI(){
 if(phase!=="playing"){
@@ -695,7 +706,7 @@ return;
 }
 $("aiPanel").classList.remove("hidden");
 if(!history.length){
-addMessage("bot",levels[levelIndex].first);
+addMessage("bot",levels[levelIndex].ai.first);
 }
 }
 
@@ -703,151 +714,61 @@ function closeAI(){
 $("aiPanel").classList.add("hidden");
 }
 
-function addMessage(role,text,isError=false){
+function addMessage(role,text){
 history.push({role,text});
-allConversations.push({
-level:levelIndex+1,
-role,text,
-time:new Date().toISOString()
-});
 let div=document.createElement("div");
-div.className="msg "+role+(isError?" error":"");
+div.className="msg "+role;
 div.textContent=text;
 $("aiMessages").appendChild(div);
 $("aiMessages").scrollTop=$("aiMessages").scrollHeight;
 }
 
-function getRecentActions(){
-return logs
-.filter(x=>x.level===levelIndex+1&&
-["decision","investigation"].includes(x.type))
-.slice(-12)
-.map(x=>x.data);
-}
-
-async function askAI(question){
+function askAI(question){
 question=(question||"").trim();
-if(!question||aiBusy||phase!=="playing")return;
+if(!question)return;
 
-const currentLevel=levelIndex;
-const requestId=++aiRequestId;
-const previousHistory=history.slice(-12).map(x=>({
-role:x.role==="user"?"user":"assistant",
-content:x.text
-}));
-
+let L=levels[levelIndex];
 addMessage("user",question);
 $("aiInput").value="";
-aiBusy=true;
-$("askBtn").disabled=true;
-$("askBtn").textContent="AI 思考中…";
-$("aiStatus").textContent="● 正在連接 Gemini…";
 
-const controller=new AbortController();
-const timeout=setTimeout(()=>controller.abort(),20000);
+let q=question.toLowerCase();
+let answer;
 
-try{
-const response=await fetch(WORKER_URL,{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
-question:question,
-level:currentLevel+1,
-actions:getRecentActions(),
-history:previousHistory,
-context:{
-title:levels[currentLevel].title,
-city:levels[currentLevel].city,
-scenario:levels[currentLevel].desc,
-goal:levels[currentLevel].goal,
-score:levelScore,
-clues:clues.size
+if(/安撫|情緒|緊張|害怕|生氣|抱怨/.test(q)){
+answer=L.ai.calm;
+}else if(/團員|團體|其他人|行程|集合|安排/.test(q)){
+answer=L.ai.group;
+}else if(/怎麼|如何|先做|下一步|處理|建議|方法/.test(q)){
+answer=L.ai.action;
+}else if(/找到|確認|知道|線索|資訊/.test(q)){
+answer="目前你已完成 "+decisions.size+" 項互動。"+
+"請想想：哪些資訊已確認？哪些只是推測？"+
+"還可以向哪位角色取得更多資料？";
+}else{
+answer="我想先了解你的判斷。"+
+"你現在最擔心的風險是什麼？"+
+"你會先確認哪一項資訊？"+
+"你也可以問我『下一步怎麼做』或『如何安撫旅客』。";
 }
-}),
-signal:controller.signal
-});
-
-let data;
-try{
-data=await response.json();
-}catch(e){
-throw new Error("伺服器沒有回傳有效的 JSON 資料");
-}
-
-if(!response.ok){
-throw new Error(
-"HTTP "+response.status+"："+
-(data.error||data.message||"伺服器拒絕請求")
-);
-}
-
-const answer=
-typeof data.answer==="string"?data.answer.trim():
-typeof data.reply==="string"?data.reply.trim():
-typeof data.response==="string"?data.response.trim():"";
-
-if(!answer){
-throw new Error("後端沒有回傳 answer 內容");
-}
-
-if(requestId!==aiRequestId||currentLevel!==levelIndex)return;
 
 addMessage("bot",answer);
-mentorMode="generative_ai";
-$("aiStatus").textContent="● Gemini AI 已連線";
-log("ai_question",{
-question,answer,
-mode:"generative_ai",
-model:data.model||"unspecified"
-});
-
-}catch(error){
-if(requestId!==aiRequestId||currentLevel!==levelIndex)return;
-
-let detail=error.name==="AbortError"
-?"連線超過 20 秒，請稍後再試。"
-:error.message;
-
-addMessage(
-"bot",
-"目前無法取得 Gemini 的回答。\n\n"+
-"錯誤資訊："+detail+"\n\n"+
-"這不是固定答案模式，請檢查 AI 後端連線。",
-true
-);
-
-mentorMode="connection_error";
-$("aiStatus").textContent="● AI 連線失敗";
-log("ai_error",{question,error:detail});
-
-}finally{
-clearTimeout(timeout);
-if(requestId===aiRequestId){
-aiBusy=false;
-$("askBtn").disabled=false;
-$("askBtn").textContent="送出提問";
-}
-}
+log("ai_question",{question,answer,mode:"offline_rule_based"});
 }
 
 $("aiInput").addEventListener("keydown",e=>{
-if(e.key==="Enter"){
-e.preventDefault();
-askAI($("aiInput").value);
-}
+if(e.key==="Enter")askAI($("aiInput").value);
 });
 
 function openHelp(){
-notify("點擊人物對話、調查標記蒐集線索，右下角可詢問 Gemini AI 導師。");
+notify("點擊人物對話、調查標記蒐集線索，右下角可詢問導師。");
 }
 
 function exportLog(){
 let data={
 title:"TRAVEL AI 學習紀錄",
-version:"3.0",
-mentorMode,
+version:"2.1",
+mentorMode:"offline_rule_based",
 totalScore,
-conversations:allConversations,
 events:logs
 };
 let blob=new Blob([JSON.stringify(data,null,2)],{
@@ -856,14 +777,14 @@ type:"application/json"
 let url=URL.createObjectURL(blob);
 let a=document.createElement("a");
 a.href=url;
-a.download="travel-ai-learning-log-v3.json";
+a.download="travel-ai-learning-log.json";
 document.body.appendChild(a);
 a.click();
 a.remove();
 setTimeout(()=>URL.revokeObjectURL(url),1500);
 }
 
-/* 原創背景音樂 */
+/* 原創環境音樂：Web Audio API */
 let audioCtx=null;
 let musicOn=false;
 let musicTimer=null;
@@ -886,6 +807,7 @@ if(!audioCtx||!musicOn)return;
 let notes=melody[noteIndex%melody.length];
 noteIndex++;
 let now=audioCtx.currentTime;
+
 notes.forEach((freq,i)=>{
 let osc=audioCtx.createOscillator();
 let gain=audioCtx.createGain();
